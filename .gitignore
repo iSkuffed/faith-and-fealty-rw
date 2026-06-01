@@ -1,0 +1,24 @@
+# Build artifacts
+Sources/obj/
+Sources/bin/
+*.user
+*.suo
+*.cache
+
+# Debug files (user-owned, not part of mod)
+DEBUG.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vs/
+.vscode/
+*.swp
+*.swo
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
