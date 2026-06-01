@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <IdeoRework.BeliefCategoryMappingDef>
+    <defName>DefaultBeliefCategories</defName>
+    <entries>
+      <!-- RELIGION (supernatural/spiritual worldview) -->
+      <li><memeDefName>Structure_Animist</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Structure_TheistEmbodied</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Structure_TheistAbstract</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Structure_Archist</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Structure_OriginChristian</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Structure_OriginIslamic</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Structure_OriginHindu</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Structure_OriginBuddhist</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Proselytizer</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Blindsight</memeDefName><category>Religion</category></li>
+      <li><memeDefName>HighLife</memeDefName><category>Religion</category></li>
+      <li><memeDefName>PainIsVirtue</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Cannibal</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Nudism</memeDefName><category>Religion</category></li>
+      <li><memeDefName>TreeConnection</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Darkness</memeDefName><category>Religion</category></li>
+      <li><memeDefName>AnimalPersonhood</memeDefName><category>Religion</category></li>
+      <li><memeDefName>Tunneler</memeDefName><category>Religion</category></li>
+      <li><memeDefName>MaleSupremacy</memeDefName><category>Religion</category></li>
+      <li><memeDefName>FemaleSupremacy</memeDefName><category>Religion</category></li>
+      <li><memeDefName>HumanPrimacy</memeDefName><category>Religion</category></li>
+      <li><memeDefName>NaturePrimacy</memeDefName><category>Religion</category></li>
+      <li><memeDefName>FleshPurity</memeDefName><category>Religion</category></li>
+
+      <!-- IDEOLOGY (social/political/economic) -->
+      <li><memeDefName>Structure_Ideological</memeDefName><category>Ideology</category></li>
+      <li><memeDefName>Transhumanist</memeDefName><category>Ideology</category></li>
+      <li><memeDefName>Supremacist</memeDefName><category>Ideology</category></li>
+      <li><memeDefName>Loyalist</memeDefName><category>Ideology</category></li>
+      <li><memeDefName>Guilty</memeDefName><category>Ideology</category></li>
+      <li><memeDefName>Individualist</memeDefName><category>Ideology</category></li>
+      <li><memeDefName>Collectivist</memeDefName><category>Ideology</category></li>
+      <li><memeDefName>Rancher</memeDefName><category>Ideology</category></li>
+      <li><memeDefName>Raider</memeDefName><category>Ideology</category></li>
+    </entries>
+  </IdeoRework.BeliefCategoryMappingDef>
+</Defs>

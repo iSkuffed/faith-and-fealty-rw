@@ -9,6 +9,7 @@ namespace IdeoRework
         static IdeoReworkMod()
         {
             new Harmony("skuffed.ideorework").PatchAll();
+            BeliefCategoryLookup.Initialize();
         }
     }
 }

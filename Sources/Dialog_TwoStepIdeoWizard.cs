@@ -45,6 +45,9 @@ namespace IdeoRework
 
         public Dialog_TwoStepIdeoWizard(Page_ChooseIdeoPreset parent)
         {
+            // Purge old wizard-created ideology/religion from previous session
+            SessionRegistry.Purge();
+
             parentPage = parent;
             forcePause = true;
             absorbInputAroundWindow = true;
@@ -420,6 +423,24 @@ namespace IdeoRework
             }
             innerY += 38f;
 
+            // Narrative section
+            DrawSectionHeader("Narrative",
+                "Write the core narrative of your " + (isReligion ? "religion" : "ideology") + ".",
+                width, ref innerY);
+
+            float narrativeWidth = width - 80f;
+            string desc = currentIdeo.description ?? "";
+            int narrativeHeight = (int)Mathf.Max(70f, Text.CalcHeight(desc, narrativeWidth));
+            Rect narrativeRect = new Rect(40f, innerY, narrativeWidth, narrativeHeight);
+            Widgets.Label(narrativeRect, desc);
+
+            if (Widgets.ButtonInvisible(narrativeRect))
+            {
+                Find.WindowStack.Add(new Dialog_EditIdeoDescription(currentIdeo));
+            }
+
+            innerY += narrativeHeight + 17f;
+
             DrawSectionHeader("Precepts",
                 "Add or remove precepts for your " + (isReligion ? "religion" : "ideology") + ".",
                 width, ref innerY);
@@ -639,33 +660,10 @@ namespace IdeoRework
             }
         }
 
-        private void CleanupOldIdeos()
-        {
-            try
-            {
-                // Clear initialPlayerIdeo flag on all ideos (don't remove — faction still references them)
-                foreach (var ideo in Find.IdeoManager.IdeosListForReading)
-                {
-                    ideo.initialPlayerIdeo = false;
-                }
-
-                // Clear religion caches
-                PresetReligions.ClearCaches();
-                ReligionIdeoTracker.ClearAll();
-            }
-            catch (Exception ex)
-            {
-                Log.Warning("[IdeoRework] CleanupOldIdeos: " + ex.Message);
-            }
-        }
-
         private void OnWizardComplete()
         {
             try
             {
-                // Clean up old ideos from previous attempts
-                CleanupOldIdeos();
-
                 // Validate both ideos exist
                 if (religionIdeo == null)
                 {
@@ -680,14 +678,15 @@ namespace IdeoRework
                     return;
                 }
 
-                // Register religion ideo with IdeoManager (ideology is registered by AssignIdeoToPlayer)
-                if (!Find.IdeoManager.IdeosListForReading.Contains(religionIdeo))
-                    Find.IdeoManager.Add(religionIdeo);
+                // Store in session registry
+                SessionRegistry.CurrentIdeology = ideologyIdeo;
+                SessionRegistry.CurrentReligion = religionIdeo;
+                SessionRegistry.IsSessionActive = true;
 
                 // Store player's custom religion for pawn assignment
                 PresetReligions.PlayerReligionIdeo = religionIdeo;
 
-                // Set ideology as the player's primary ideo
+                // Set preset fields for vanilla UI
                 var presetField = AccessTools.Field(typeof(Page_ChooseIdeoPreset), "presetSelection");
                 if (presetField == null)
                 {
@@ -706,13 +705,9 @@ namespace IdeoRework
                 }
                 classicField.SetValue(parentPage, ideologyIdeo);
 
-                // Assign ideology ideo to player faction
-                var assignIdeoMethod = AccessTools.Method(typeof(Page_ChooseIdeoPreset), "AssignIdeoToPlayer");
-                if (assignIdeoMethod != null)
-                    assignIdeoMethod.Invoke(parentPage, new object[] { ideologyIdeo });
-
-                // Add religion ideo to player faction's minor ideos (AFTER AssignIdeoToPlayer to avoid recalculation clearing it)
-                FactionIdeoHelper.AddMinorIdeo(Faction.OfPlayer.ideos, religionIdeo);
+                // Set primary ideo BEFORE generating pawns (so pawns get correct ideology)
+                Faction.OfPlayer.ideos.SetPrimary(ideologyIdeo);
+                ideologyIdeo.initialPlayerIdeo = true;
 
                 // Regenerate starting pawns (use PostIdeoChosen which sets startingPawnCount + generates pawns + adds optional pawns)
                 try
@@ -728,14 +723,9 @@ namespace IdeoRework
                                 var partType = part.GetType();
                                 if (partType.Name == "ScenPart_ConfigPage_ConfigureStartingPawns")
                                 {
-                                    // Only call PostIdeoChosen if pawns haven't been generated yet
-                                    var gameInit = Find.GameInitData;
-                                    if (gameInit == null || gameInit.startingAndOptionalPawns.Count == 0)
-                                    {
-                                        var postIdeoMethod = partType.GetMethod("PostIdeoChosen",
-                                            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                                        postIdeoMethod?.Invoke(part, null);
-                                    }
+                                    var postIdeoMethod = partType.GetMethod("PostIdeoChosen",
+                                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                                    postIdeoMethod?.Invoke(part, null);
                                     break;
                                 }
                             }
@@ -747,25 +737,8 @@ namespace IdeoRework
                     Log.Warning("[IdeoRework] Could not regenerate starting pawns: " + ex.Message);
                 }
 
-                // Assign religion ideo to starting pawns from GameInitData
-                try
-                {
-                    var gameInit = Find.GameInitData;
-                    if (gameInit != null)
-                    {
-                        foreach (var pawn in gameInit.startingAndOptionalPawns)
-                        {
-                            if (pawn?.ideo != null)
-                            {
-                                pawn.SetReligionIdeo(religionIdeo);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Warning("[IdeoRework] Could not assign religion ideo to pawns: " + ex.Message);
-                }
+                // Hard override: assign ideology + religion to ALL player pawns
+                HardOverride.AssignToAllPlayerPawns(ideologyIdeo, religionIdeo);
 
                 if (parentPage.next == null)
                 {
@@ -777,7 +750,6 @@ namespace IdeoRework
                 parentPage.next.prev = parentPage;
                 Close();
                 Find.WindowStack.Add(parentPage.next);
-                Find.WindowStack.TryRemove(parentPage, true);
             }
             catch (Exception ex)
             {

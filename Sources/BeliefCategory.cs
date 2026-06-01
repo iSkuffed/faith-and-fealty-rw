@@ -13,50 +13,29 @@ namespace IdeoRework
 
     public static class BeliefCategoryLookup
     {
-        private static readonly Dictionary<string, BeliefCategory> MemeCategories = new Dictionary<string, BeliefCategory>
+        private static Dictionary<string, BeliefCategory> MemeCategories;
+
+        /// <summary>
+        /// Build the mapping from XML defs. Called at startup.
+        /// </summary>
+        public static void Initialize()
         {
-            // --- RELIGION (supernatural/spiritual worldview) ---
-            {"Structure_Animist", BeliefCategory.Religion},
-            {"Structure_TheistEmbodied", BeliefCategory.Religion},
-            {"Structure_TheistAbstract", BeliefCategory.Religion},
-            {"Structure_Archist", BeliefCategory.Religion},
-            {"Structure_OriginChristian", BeliefCategory.Religion},
-            {"Structure_OriginIslamic", BeliefCategory.Religion},
-            {"Structure_OriginHindu", BeliefCategory.Religion},
-            {"Structure_OriginBuddhist", BeliefCategory.Religion},
-            {"Proselytizer", BeliefCategory.Religion},
-            {"Blindsight", BeliefCategory.Religion},
-            {"HighLife", BeliefCategory.Religion},
-            {"PainIsVirtue", BeliefCategory.Religion},
-            {"Cannibal", BeliefCategory.Religion},
-            {"Nudism", BeliefCategory.Religion},
-            {"TreeConnection", BeliefCategory.Religion},
-            {"Darkness", BeliefCategory.Religion},
-            {"AnimalPersonhood", BeliefCategory.Religion},
-            {"Tunneler", BeliefCategory.Religion},
-
-            // --- RELIGION (added after user feedback) ---
-            {"MaleSupremacy", BeliefCategory.Religion},
-            {"FemaleSupremacy", BeliefCategory.Religion},
-            {"HumanPrimacy", BeliefCategory.Religion},
-            {"NaturePrimacy", BeliefCategory.Religion},
-            {"FleshPurity", BeliefCategory.Religion},
-
-            // --- IDEOLOGY (social/political/economic) ---
-            {"Structure_Ideological", BeliefCategory.Ideology},
-            {"Transhumanist", BeliefCategory.Ideology},
-            {"Supremacist", BeliefCategory.Ideology},
-            {"Loyalist", BeliefCategory.Ideology},
-            {"Guilty", BeliefCategory.Ideology},
-            {"Individualist", BeliefCategory.Ideology},
-            {"Collectivist", BeliefCategory.Ideology},
-            {"Rancher", BeliefCategory.Ideology},
-            {"Raider", BeliefCategory.Ideology},
-        };
+            MemeCategories = new Dictionary<string, BeliefCategory>();
+            foreach (var mapping in DefDatabase<BeliefCategoryMappingDef>.AllDefsListForReading)
+            {
+                if (mapping.entries == null) continue;
+                foreach (var entry in mapping.entries)
+                {
+                    if (!string.IsNullOrEmpty(entry.memeDefName))
+                        MemeCategories[entry.memeDefName] = entry.category;
+                }
+            }
+            Log.Message($"[IdeoRework] Loaded {MemeCategories.Count} meme → belief category mappings from XML");
+        }
 
         public static BeliefCategory GetCategory(MemeDef meme)
         {
-            if (MemeCategories.TryGetValue(meme.defName, out var cat))
+            if (MemeCategories != null && MemeCategories.TryGetValue(meme.defName, out var cat))
                 return cat;
             return BeliefCategory.Religion;
         }
@@ -66,7 +45,7 @@ namespace IdeoRework
             get
             {
                 return DefDatabase<MemeDef>.AllDefsListForReading
-                    .Where(m => MemeCategories.TryGetValue(m.defName, out var cat) && cat == BeliefCategory.Religion)
+                    .Where(m => MemeCategories != null && MemeCategories.TryGetValue(m.defName, out var cat) && cat == BeliefCategory.Religion)
                     .ToList();
             }
         }
@@ -76,7 +55,7 @@ namespace IdeoRework
             get
             {
                 return DefDatabase<MemeDef>.AllDefsListForReading
-                    .Where(m => MemeCategories.TryGetValue(m.defName, out var cat) && cat == BeliefCategory.Ideology)
+                    .Where(m => MemeCategories != null && MemeCategories.TryGetValue(m.defName, out var cat) && cat == BeliefCategory.Ideology)
                     .ToList();
             }
         }

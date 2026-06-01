@@ -4,6 +4,8 @@ Sources/bin/
 *.user
 *.suo
 *.cache
+build.sh
+SessionHandoff.md
 
 # Debug files (user-owned, not part of mod)
 DEBUG.md
