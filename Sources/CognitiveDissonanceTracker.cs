@@ -234,8 +234,17 @@ namespace IdeoRework
 
             float erosion = erosionPerDay * tickDelta / 60000f;
 
-            // Erode ideology certainty
-            pawn.ideo?.OffsetCertainty(erosion);
+            // Erode ideology certainty (bypass floating text from OffsetCertainty)
+            if (pawn.ideo != null)
+            {
+                var certaintyField = AccessTools.Field(typeof(Pawn_IdeoTracker), "certaintyInt");
+                if (certaintyField != null)
+                {
+                    float current = pawn.ideo.Certainty;
+                    float newCertainty = Mathf.Clamp01(current + erosion);
+                    certaintyField.SetValue(pawn.ideo, newCertainty);
+                }
+            }
 
             // Erode religion certainty
             pawn.SetReligionCertainty(Mathf.Clamp01(pawn.GetReligionCertainty() + erosion));

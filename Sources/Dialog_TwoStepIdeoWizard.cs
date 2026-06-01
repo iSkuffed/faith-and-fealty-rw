@@ -584,6 +584,9 @@ namespace IdeoRework
 
         private static void SetupIdeo(Ideo ideo, List<MemeDef> selectedMemes)
         {
+            // Assign a unique ID (new Ideo() doesn't do this)
+            ideo.id = Find.UniqueIDsManager.GetNextIdeoID();
+
             var preceptsField = AccessTools.Field(typeof(Ideo), "precepts");
             if (preceptsField != null && preceptsField.GetValue(ideo) == null)
                 preceptsField.SetValue(ideo, new List<Precept>());
@@ -685,6 +688,8 @@ namespace IdeoRework
 
                 // Store player's custom religion for pawn assignment
                 PresetReligions.PlayerReligionIdeo = religionIdeo;
+                PresetReligions.CreatedReligionIdeos.Add(religionIdeo);
+                IdeoReworkGameComponent.SaveReligionIdeoIds();
 
                 // Set preset fields for vanilla UI
                 var presetField = AccessTools.Field(typeof(Page_ChooseIdeoPreset), "presetSelection");

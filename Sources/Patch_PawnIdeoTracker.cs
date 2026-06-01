@@ -73,6 +73,10 @@ namespace IdeoRework
     [HarmonyPatch("ExposeData")]
     public static class Patch_PawnIdeoTracker_ExposeData
     {
+        // Persist religion data across separate ExposeData calls (LoadingVars → PostLoadInit)
+        private static readonly Dictionary<int, (int religionIdeoId, float certainty)> PendingReligionData
+            = new Dictionary<int, (int, float)>();
+
         static void Postfix(Pawn_IdeoTracker __instance)
         {
             try
@@ -81,19 +85,44 @@ namespace IdeoRework
                 var pawn = pawnField?.GetValue(__instance) as Pawn;
                 if (pawn == null) return;
 
-                Ideo religionIdeo = null;
-                float religionCertainty = 0f;
                 if (Scribe.mode == LoadSaveMode.Saving)
                 {
-                    religionIdeo = pawn.GetReligionIdeo();
-                    religionCertainty = pawn.GetReligionCertainty();
+                    var religionIdeo = pawn.GetReligionIdeo();
+                    var religionCertainty = pawn.GetReligionCertainty();
+                    int religionIdeoId = religionIdeo?.id ?? -1;
+                    Scribe_Values.Look(ref religionIdeoId, "religionIdeoId", -1);
+                    Scribe_Values.Look(ref religionCertainty, "religionCertainty", 0f);
                 }
-
-                Scribe_Deep.Look(ref religionIdeo, "religionIdeoReligion");
-                Scribe_Values.Look(ref religionCertainty, "religionCertainty", 0f);
-
-                if (Scribe.mode == LoadSaveMode.PostLoadInit)
+                else if (Scribe.mode == LoadSaveMode.LoadingVars)
                 {
+                    int religionIdeoId = -1;
+                    float religionCertainty = 0f;
+                    Scribe_Values.Look(ref religionIdeoId, "religionIdeoId", -1);
+                    Scribe_Values.Look(ref religionCertainty, "religionCertainty", 0f);
+                    PendingReligionData[pawn.thingIDNumber] = (religionIdeoId, religionCertainty);
+                }
+                else if (Scribe.mode == LoadSaveMode.PostLoadInit)
+                {
+                    Ideo religionIdeo = null;
+                    float religionCertainty = 0f;
+
+                    if (PendingReligionData.TryGetValue(pawn.thingIDNumber, out var data))
+                    {
+                        religionCertainty = data.certainty;
+                        if (data.religionIdeoId >= 0)
+                        {
+                            foreach (var candidate in Find.IdeoManager.IdeosListForReading)
+                            {
+                                if (candidate.id == data.religionIdeoId)
+                                {
+                                    religionIdeo = candidate;
+                                    break;
+                                }
+                            }
+                        }
+                        PendingReligionData.Remove(pawn.thingIDNumber);
+                    }
+
                     pawn.SetReligionIdeo(religionIdeo);
                     pawn.SetReligionCertainty(religionCertainty);
                 }

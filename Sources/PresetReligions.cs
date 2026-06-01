@@ -247,6 +247,9 @@ namespace IdeoRework
                 // Track as a religion ideo
                 CreatedReligionIdeos.Add(ideo);
 
+                // Persist religion ideo IDs for save/load
+                IdeoReworkGameComponent.SaveReligionIdeoIds();
+
                 // Cache by preset for sharing across factions
                 ReligionIdeoByPreset[preset.id] = ideo;
 

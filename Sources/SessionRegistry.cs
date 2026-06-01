@@ -24,27 +24,34 @@ namespace IdeoRework
         /// </summary>
         public static void Purge()
         {
-            // 1. Remove old ideology from IdeoManager
+            // 1. Remove old ideology from faction tracker before removing from IdeoManager
             if (CurrentIdeology != null)
             {
                 try
                 {
+                    // Clear primary ideo from player faction if it references the old ideology
+                    var playerIdeos = Faction.OfPlayer?.ideos;
+                    if (playerIdeos != null)
+                    {
+                        var primaryField = AccessTools.Field(typeof(FactionIdeosTracker), "primaryIdeo");
+                        var currentPrimary = primaryField?.GetValue(playerIdeos) as Ideo;
+                        if (currentPrimary == CurrentIdeology)
+                        {
+                            primaryField.SetValue(playerIdeos, null);
+                        }
+                    }
+
+                    // Now safe to remove from IdeoManager
                     if (Find.IdeoManager.IdeosListForReading.Contains(CurrentIdeology))
                         Find.IdeoManager.Remove(CurrentIdeology);
                 }
-                catch { } // Suppress "Faction contains ideo which was removed" — expected behavior
+                catch { }
             }
 
-            // 2. Remove old religion from IdeoManager and faction trackers
+            // 2. Remove old religion from faction trackers, then IdeoManager
             if (CurrentReligion != null)
             {
-                try
-                {
-                    if (Find.IdeoManager.IdeosListForReading.Contains(CurrentReligion))
-                        Find.IdeoManager.Remove(CurrentReligion);
-                }
-                catch { } // Suppress faction reference error — expected behavior
-
+                // Remove from faction trackers FIRST
                 foreach (var faction in Find.FactionManager.AllFactions)
                 {
                     if (faction.ideos == null) continue;
@@ -53,6 +60,14 @@ namespace IdeoRework
                     if (minorList != null)
                         minorList.Remove(CurrentReligion);
                 }
+
+                // Now safe to remove from IdeoManager
+                try
+                {
+                    if (Find.IdeoManager.IdeosListForReading.Contains(CurrentReligion))
+                        Find.IdeoManager.Remove(CurrentReligion);
+                }
+                catch { }
             }
 
             // 3. Clear all caches
