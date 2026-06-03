@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <!--
+        Religion Preset Defs
+
+        These define preset religions for AI factions. Players create their own via the wizard.
+
+        Fields:
+            defName               - Unique identifier (required)
+            baseName              - Base name for the religion (may be randomized with prefixes/suffixes)
+            structureMeme         - Structure meme defName (required, determines deity support, worship room, etc.)
+            normalMemes           - List of normal meme defNames (optional, added alongside structure meme)
+            leaderTitleMale       - Male leader title (optional)
+            leaderTitleFemale     - Female leader title (optional)
+            description           - Religion description (optional, auto-generated if empty)
+            factionWhitelist      - ONLY these factions can use this religion (empty = all factions)
+            factionBlacklist      - These factions CANNOT use this religion (empty = no exclusions)
+            deityNameMakerOverride - RulePackDef for deity name generation (optional).
+                                    Overrides the structure meme's default deity name grammar.
+                                    Only effective if structureMeme supports deities (deityCount > 0).
+                                    Examples: "NamerDeityChristian", "NamerDeityPagan"
+                                    If not set, the structure meme's default is used.
+
+        IMPORTANT:
+            - Whitelisted presets MUST come first — selection returns the first match.
+            - Structure memes with deityCount=0 (e.g., Structure_Animist, Structure_Archist)
+              will NOT show deities in the UI, regardless of other settings.
+            - Religion names are auto-generated using themed prefixes/suffixes based on the
+              structure meme. See PresetReligions.cs for the name generation logic.
+
+        Example with deities (Structure_OriginChristian supports deityCount=1):
+            <IdeoRework.ReligionPresetDef>
+                <defName>Preset_HolyLight</defName>
+                <baseName>Church of the Holy Light</baseName>
+                <structureMeme>Structure_OriginChristian</structureMeme>
+                <normalMemes>
+                    <li>Proselytizer</li>
+                    <li>FleshPurity</li>
+                </normalMemes>
+                <leaderTitleMale>High Priest</leaderTitleMale>
+                <leaderTitleFemale>High Priestess</leaderTitleFemale>
+                <deityNameMakerOverride>NamerDeityChristian</deityNameMakerOverride>
+            </IdeoRework.ReligionPresetDef>
+
+        Example without deities (Structure_Animist has deityCount=0):
+            <IdeoRework.ReligionPresetDef>
+                <defName>Preset_OldWays</defName>
+                <baseName>The Old Ways</baseName>
+                <structureMeme>Structure_Animist</structureMeme>
+                <normalMemes>
+                    <li>AnimalPersonhood</li>
+                    <li>TreeConnection</li>
+                </normalMemes>
+                <leaderTitleMale>High Shaman</leaderTitleMale>
+                <leaderTitleFemale>High Shaman</leaderTitleFemale>
+            </IdeoRework.ReligionPresetDef>
+
+        Example with faction whitelist (only assigned to Empire):
+            <IdeoRework.ReligionPresetDef>
+                <defName>Preset_ImperialCult</defName>
+                <baseName>Imperial Cult</baseName>
+                <structureMeme>Structure_Archist</structureMeme>
+                <normalMemes>
+                    <li>Collectivist</li>
+                    <li>Loyalist</li>
+                    <li>HumanPrimacy</li>
+                </normalMemes>
+                <leaderTitleMale>Grand Inquisitor</leaderTitleMale>
+                <leaderTitleFemale>Grand Inquisitor</leaderTitleFemale>
+                <factionWhitelist>
+                    <li>Empire</li>
+                </factionWhitelist>
+            </IdeoRework.ReligionPresetDef>
+    -->
+
+    <!-- Whitelisted presets MUST come first — selection algorithm returns first match -->
+    <IdeoRework.ReligionPresetDef>
+        <defName>Preset_ImperialCult</defName>
+        <baseName>Imperial Cult</baseName>
+        <structureMeme>Structure_Archist</structureMeme>
+        <normalMemes>
+            <li>Collectivist</li>
+            <li>Loyalist</li>
+            <li>HumanPrimacy</li>
+        </normalMemes>
+        <leaderTitleMale>Grand Inquisitor</leaderTitleMale>
+        <leaderTitleFemale>Grand Inquisitor</leaderTitleFemale>
+        <factionWhitelist>
+            <li>Empire</li>
+        </factionWhitelist>
+        <!-- Structure_Archist has deityCount=0, no deities will be generated -->
+    </IdeoRework.ReligionPresetDef>
+
+    <IdeoRework.ReligionPresetDef>
+        <defName>Preset_HolyLight</defName>
+        <baseName>Church of the Holy Light</baseName>
+        <structureMeme>Structure_OriginChristian</structureMeme>
+        <normalMemes>
+            <li>Proselytizer</li>
+            <li>FleshPurity</li>
+        </normalMemes>
+        <leaderTitleMale>High Priest</leaderTitleMale>
+        <leaderTitleFemale>High Priestess</leaderTitleFemale>
+        <deityNameMakerOverride>NamerDeityChristian</deityNameMakerOverride>
+        <!-- Structure_OriginChristian supports deities (deityCount=1) -->
+        <!-- deityNameMakerOverride uses Christian-style names for the deity -->
+    </IdeoRework.ReligionPresetDef>
+
+    <IdeoRework.ReligionPresetDef>
+        <defName>Preset_Crescent</defName>
+        <baseName>Faith of the Crescent</baseName>
+        <structureMeme>Structure_OriginIslamic</structureMeme>
+        <normalMemes>
+            <li>Proselytizer</li>
+            <li>Collectivist</li>
+        </normalMemes>
+        <leaderTitleMale>Imam</leaderTitleMale>
+        <leaderTitleFemale>Imamah</leaderTitleFemale>
+        <!-- Structure_OriginIslamic supports deities (deityCount=1), uses default name generation -->
+    </IdeoRework.ReligionPresetDef>
+
+    <IdeoRework.ReligionPresetDef>
+        <defName>Preset_OldWays</defName>
+        <baseName>The Old Ways</baseName>
+        <structureMeme>Structure_Animist</structureMeme>
+        <normalMemes>
+            <li>AnimalPersonhood</li>
+            <li>TreeConnection</li>
+        </normalMemes>
+        <leaderTitleMale>High Shaman</leaderTitleMale>
+        <leaderTitleFemale>High Shaman</leaderTitleFemale>
+        <!-- Structure_Animist has deityCount=0, no deities will be generated -->
+    </IdeoRework.ReligionPresetDef>
+
+    <!-- Example: Custom religion for a modded faction (uncomment and modify)
+    <IdeoRework.ReligionPresetDef>
+        <defName>Preset_Druidism</defName>
+        <baseName>Druid Circle</baseName>
+        <structureMeme>Structure_Animist</structureMeme>
+        <normalMemes>
+            <li>TreeConnection</li>
+            <li>AnimalPersonhood</li>
+        </normalMemes>
+        <leaderTitleMale>Archdruid</leaderTitleMale>
+        <leaderTitleFemale>Archdruidess</leaderTitleFemale>
+        <description>An ancient order of druids who commune with the spirits of nature.</description>
+        <deityNameMakerOverride>NamerDeityPagan</deityNameMakerOverride>
+        <factionWhitelist>
+            <li>MyModdedFaction</li>
+        </factionWhitelist>
+    </IdeoRework.ReligionPresetDef>
+    -->
+</Defs>

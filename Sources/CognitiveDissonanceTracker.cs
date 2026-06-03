@@ -220,6 +220,18 @@ namespace IdeoRework
 
         // ── Certainty erosion ──────────────────────────────────────────────
 
+        private static void ErodeIdeologyCertainty(Pawn pawn, float erosion)
+        {
+            if (pawn.ideo == null) return;
+            var certaintyField = AccessTools.Field(typeof(Pawn_IdeoTracker), "certaintyInt");
+            if (certaintyField != null)
+            {
+                float current = pawn.ideo.Certainty;
+                float newCertainty = Mathf.Clamp01(current + erosion);
+                certaintyField.SetValue(pawn.ideo, newCertainty);
+            }
+        }
+
         public static void ApplyCertaintyErosion(Pawn pawn, int stage, int tickDelta)
         {
             if (stage < 0) return;
@@ -232,22 +244,53 @@ namespace IdeoRework
                 _ => 0f
             };
 
-            float erosion = erosionPerDay * tickDelta / 60000f;
+            // Randomly pick which system gets eroded this tick
+            bool erodeIdeology = Rand.Bool;
 
-            // Erode ideology certainty (bypass floating text from OffsetCertainty)
-            if (pawn.ideo != null)
+            if (erodeIdeology)
             {
-                var certaintyField = AccessTools.Field(typeof(Pawn_IdeoTracker), "certaintyInt");
-                if (certaintyField != null)
+                float erosion = erosionPerDay * tickDelta / 60000f;
+                ErodeIdeologyCertainty(pawn, erosion);
+            }
+            else
+            {
+                // Religion erodes at 50% of ideology rate
+                float erosion = erosionPerDay * 0.5f * tickDelta / 60000f;
+                float newCertainty = Mathf.Clamp01(pawn.GetReligionCertainty() + erosion);
+                pawn.SetReligionCertainty(newCertainty);
+                ReligionConversionTracker.CheckForConversion(pawn, newCertainty);
+            }
+        }
+
+        // ── Passive mood-based certainty gain (religion) ──────────────────
+
+        private static void ApplyPassiveReligionGain(Pawn pawn, int tickDelta)
+        {
+            if (pawn.needs?.mood == null) return;
+
+            float moodLevel = pawn.needs.mood.CurLevelPercentage;
+            float gainPerDay = ConversionTuning.CertaintyPerDayByMoodCurve.Evaluate(moodLevel);
+
+            // Age factor: children change certainty faster (matches vanilla CertaintyChangeFactor)
+            float ageFactor = 1f;
+            if (ModsConfig.BiotechActive && pawn.ageTracker != null)
+            {
+                float adultAge = pawn.ageTracker.LifeStageMinAge(LifeStageDefOf.HumanlikeAdult);
+                float childAge = pawn.ageTracker.LifeStageMinAge(LifeStageDefOf.HumanlikeChild);
+                if (pawn.ageTracker.AgeBiologicalYearsFloat < adultAge && adultAge > childAge)
                 {
-                    float current = pawn.ideo.Certainty;
-                    float newCertainty = Mathf.Clamp01(current + erosion);
-                    certaintyField.SetValue(pawn.ideo, newCertainty);
+                    ageFactor = Mathf.Lerp(2f, 1f,
+                        (pawn.ageTracker.AgeBiologicalYearsFloat - childAge) / (adultAge - childAge));
                 }
             }
 
-            // Erode religion certainty
-            pawn.SetReligionCertainty(Mathf.Clamp01(pawn.GetReligionCertainty() + erosion));
+            float gain = gainPerDay * (tickDelta / 60000f) * ageFactor;
+
+            if (gain > 0f)
+            {
+                float newCertainty = Mathf.Clamp01(pawn.GetReligionCertainty() + gain);
+                pawn.SetReligionCertainty(newCertainty);
+            }
         }
 
         // ── Main tick method ───────────────────────────────────────────────
@@ -269,6 +312,10 @@ namespace IdeoRework
                     int stage = CalculateDissonanceStage(religionIdeo, ideologyIdeo);
                     ApplyMoodThought(pawn, stage);
                     ApplyCertaintyErosion(pawn, stage, tickDelta);
+
+                    // Passive gain only when no dissonance
+                    if (stage < 0)
+                        ApplyPassiveReligionGain(pawn, tickDelta);
                 }
             }
             catch (Exception ex)

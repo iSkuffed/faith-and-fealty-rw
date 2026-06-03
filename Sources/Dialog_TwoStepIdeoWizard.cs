@@ -308,47 +308,50 @@ namespace IdeoRework
 
             innerY += 70f;
 
-            // Culture picker
-            DrawSectionHeader("Culture",
-                "Choose the cultural origin of your " + (isReligion ? "religion" : "ideology") + ".",
-                width, ref innerY);
-
-            Rect cultureRect = new Rect(0f, innerY, 35f, 35f);
-            if (currentIdeo.culture != null)
+            // Culture picker (Ideology only — religion doesn't have culture)
+            if (!isReligion)
             {
-                GUI.color = currentIdeo.culture.iconColor;
-                GUI.DrawTexture(cultureRect, currentIdeo.culture.Icon);
-                GUI.color = Color.white;
-            }
+                DrawSectionHeader("Culture",
+                    "Choose the cultural origin of your ideology.",
+                    width, ref innerY);
 
-            if (Widgets.ButtonInvisible(cultureRect))
-            {
-                List<FloatMenuOption> cultureOptions = new List<FloatMenuOption>();
-                foreach (CultureDef culture in DefDatabase<CultureDef>.AllDefs.OrderBy(c => c.label))
+                Rect cultureRect = new Rect(0f, innerY, 35f, 35f);
+                if (currentIdeo.culture != null)
                 {
-                    CultureDef localCulture = culture;
-                    cultureOptions.Add(new FloatMenuOption(localCulture.LabelCap, delegate
-                    {
-                        if (currentIdeo.culture != localCulture)
-                        {
-                            currentIdeo.culture = localCulture;
-                            currentIdeo.foundation.RandomizeStyles();
-                            currentIdeo.style.RecalculateAvailableStyleItems();
-                            if (currentIdeo.foundation is IdeoFoundation_Deity deityFoundation)
-                            {
-                                deityFoundation.GenerateDeities();
-                            }
-                            currentIdeo.RegenerateDescription(force: true);
-                        }
-                    }, localCulture.Icon, localCulture.iconColor));
+                    GUI.color = currentIdeo.culture.iconColor;
+                    GUI.DrawTexture(cultureRect, currentIdeo.culture.Icon);
+                    GUI.color = Color.white;
                 }
-                Find.WindowStack.Add(new FloatMenu(cultureOptions, "ChooseCulture".Translate()));
-            }
 
-            Text.Font = GameFont.Small;
-            Widgets.Label(new Rect(45f, innerY, width - 45f, 35f),
-                currentIdeo.culture?.LabelCap ?? "No culture selected");
-            innerY += 45f;
+                if (Widgets.ButtonInvisible(cultureRect))
+                {
+                    List<FloatMenuOption> cultureOptions = new List<FloatMenuOption>();
+                    foreach (CultureDef culture in DefDatabase<CultureDef>.AllDefs.OrderBy(c => c.label))
+                    {
+                        CultureDef localCulture = culture;
+                        cultureOptions.Add(new FloatMenuOption(localCulture.LabelCap, delegate
+                        {
+                            if (currentIdeo.culture != localCulture)
+                            {
+                                currentIdeo.culture = localCulture;
+                                currentIdeo.foundation.RandomizeStyles();
+                                currentIdeo.style.RecalculateAvailableStyleItems();
+                                if (currentIdeo.foundation is IdeoFoundation_Deity deityFoundation)
+                                {
+                                    deityFoundation.GenerateDeities();
+                                }
+                                currentIdeo.RegenerateDescription(force: true);
+                            }
+                        }, localCulture.Icon, localCulture.iconColor));
+                    }
+                    Find.WindowStack.Add(new FloatMenu(cultureOptions, "ChooseCulture".Translate()));
+                }
+
+                Text.Font = GameFont.Small;
+                Widgets.Label(new Rect(45f, innerY, width - 45f, 35f),
+                    currentIdeo.culture?.LabelCap ?? "No culture selected");
+                innerY += 45f;
+            }
 
             // Style selectors
             DrawSectionHeader("Styles",
@@ -452,6 +455,18 @@ namespace IdeoRework
             catch (Exception ex)
             {
                 Log.Warning("[IdeoRework] DoPrecepts error: " + ex);
+            }
+
+            // Deities section — drawn by IdeoFoundation_Deity.DoInfo
+            // Only visible if structure meme has deityCount > 0
+            try
+            {
+                if (currentIdeo.foundation != null)
+                    currentIdeo.foundation.DoInfo(ref innerY, width, IdeoEditMode.GameStart);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("[IdeoRework] DoInfo (deities) error: " + ex);
             }
 
             scrollViewHeight = innerY;

@@ -24,6 +24,7 @@ namespace IdeoRework
         public static void SetReligionIdeo(this Pawn pawn, Ideo ideo)
         {
             if (pawn == null) return;
+            var oldReligion = pawn.GetReligionIdeo();
             if (ideo == null)
             {
                 ReligionIdeos.Remove(pawn);
@@ -35,6 +36,8 @@ namespace IdeoRework
                 if (!ReligionCertainties.ContainsKey(pawn))
                     ReligionCertainties[pawn] = 1.0f;
             }
+            // Update believer count tracker
+            ReligionBelieverTracker.OnReligionChanged(pawn, oldReligion, ideo);
         }
 
         public static float GetReligionCertainty(this Pawn pawn)

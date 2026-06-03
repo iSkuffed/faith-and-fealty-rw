@@ -30,7 +30,7 @@ namespace IdeoRework
                     if (pawn?.ideo != null)
                     {
                         pawn.SetReligionIdeo(religion);
-                        pawn.SetReligionCertainty(1.0f);
+                        pawn.SetReligionCertainty(Rand.Range(0.75f, 1.0f));
                     }
                 }
 
@@ -43,10 +43,13 @@ namespace IdeoRework
                         if (pawn?.ideo != null)
                         {
                             pawn.SetReligionIdeo(religion);
-                            pawn.SetReligionCertainty(1.0f);
+                            pawn.SetReligionCertainty(Rand.Range(0.75f, 1.0f));
                         }
                     }
                 }
+
+                // 6. Cache religion believer counts
+                ReligionBelieverTracker.RecacheAll();
 
                 Log.Message($"[IdeoRework] HardOverride complete: ideology='{ideology.name}', religion='{religion.name}'");
             }

@@ -13,31 +13,20 @@ namespace IdeoRework
 
     public static class BeliefCategoryLookup
     {
-        private static Dictionary<string, BeliefCategory> MemeCategories;
-
         /// <summary>
-        /// Build the mapping from XML defs. Called at startup.
+        /// Build the mapping from ReligionDefLoader. Called at startup.
         /// </summary>
         public static void Initialize()
         {
-            MemeCategories = new Dictionary<string, BeliefCategory>();
-            foreach (var mapping in DefDatabase<BeliefCategoryMappingDef>.AllDefsListForReading)
-            {
-                if (mapping.entries == null) continue;
-                foreach (var entry in mapping.entries)
-                {
-                    if (!string.IsNullOrEmpty(entry.memeDefName))
-                        MemeCategories[entry.memeDefName] = entry.category;
-                }
-            }
-            Log.Message($"[IdeoRework] Loaded {MemeCategories.Count} meme → belief category mappings from XML");
+            ReligionDefLoader.LoadAll();
+            Log.Message($"[IdeoRework] Loaded {ReligionDefLoader.MemeCategoryLookup.Count} meme category mappings from Sorting Defs");
         }
 
         public static BeliefCategory GetCategory(MemeDef meme)
         {
-            if (MemeCategories != null && MemeCategories.TryGetValue(meme.defName, out var cat))
-                return cat;
-            return BeliefCategory.Religion;
+            if (meme == null) return BeliefCategory.Ideology;
+            var category = ReligionDefLoader.GetMemeCategory(meme.defName);
+            return category == "Religion" ? BeliefCategory.Religion : BeliefCategory.Ideology;
         }
 
         public static List<MemeDef> ReligionMemes
@@ -45,7 +34,7 @@ namespace IdeoRework
             get
             {
                 return DefDatabase<MemeDef>.AllDefsListForReading
-                    .Where(m => MemeCategories != null && MemeCategories.TryGetValue(m.defName, out var cat) && cat == BeliefCategory.Religion)
+                    .Where(m => ReligionDefLoader.GetMemeCategory(m.defName) == "Religion")
                     .ToList();
             }
         }
@@ -55,7 +44,7 @@ namespace IdeoRework
             get
             {
                 return DefDatabase<MemeDef>.AllDefsListForReading
-                    .Where(m => MemeCategories != null && MemeCategories.TryGetValue(m.defName, out var cat) && cat == BeliefCategory.Ideology)
+                    .Where(m => ReligionDefLoader.GetMemeCategory(m.defName) == "Ideology")
                     .ToList();
             }
         }

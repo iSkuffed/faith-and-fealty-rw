@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <!--
+        RELIGION CATEGORY STYLE SORTING DEFS
+        =====================================
+        
+        These defs allow you to categorize style categories as Religion, Ideology, or Both.
+        This controls whether a style appears only in religion, only in ideology, or both.
+        
+        Category values:
+            - "Religion"  = style only appears in religion system
+            - "Ideology"  = style only appears in ideology system
+            - "Both"      = style appears in both systems
+        
+        Default (no entry): "Both" — all styles appear in both systems by default.
+        You only need to add entries if you want to RESTRICT a style to one system.
+        
+        
+        HOW TO MAKE A PATCH (for mod authors)
+        ======================================
+        
+        If your mod adds custom style categories and you want to restrict them to one system,
+        create an XML file in your mod's Defs/ directory with entries like this:
+        
+        <Defs>
+            <IdeoRework.ReligionCategoryStyleDef>
+                <defName>CatStyle_YourStyleName</defName>
+                <targetDefName>YourStyleCategoryDefName</targetDefName>
+                <category>Religion</category>
+            </IdeoRework.ReligionCategoryStyleDef>
+        </Defs>
+        
+        The defName must be unique across all mods.
+        The targetDefName must match your StyleCategoryDef's defName exactly.
+        
+        Examples:
+            "Religion" = sacred art, religious architecture, spiritual symbols
+            "Ideology" = political art, modern architecture, secular symbols
+            "Both"     = general aesthetic styles that work in both contexts
+        
+        To modify an existing entry, use XML patching:
+        
+        <Defs>
+            <IdeoRework.ReligionCategoryStyleDef Name="CatStyle_ExistingDef">
+                <category>Both</category>
+            </IdeoRework.ReligionCategoryStyleDef>
+        </Defs>
+    -->
+</Defs>

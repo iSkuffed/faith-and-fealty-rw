@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <!--
+        RELIGION CATEGORY MEME SORTING DEFS
+        =====================================
+        
+        These defs categorize vanilla memes as Religion, Ideology, or Both.
+        This controls which memes appear in the Religion vs Ideology wizard steps.
+        
+        Category values:
+            - "Religion"  = meme only appears in religion system
+            - "Ideology"  = meme only appears in ideology system
+            - "Both"      = meme appears in both systems
+        
+        Default (no entry): "Ideology"
+        
+        Structure memes define the worldview foundation (e.g., Structure_Animist, Structure_Ideological).
+        Normal memes add specific beliefs (e.g., Transhumanist, Proselytizer).
+        Both types are categorized here.
+        
+        
+        HOW TO MAKE A PATCH (for mod authors)
+        ======================================
+        
+        If your mod adds custom memes and you want them to work with Ideology & Religion Rework,
+        create an XML file in your mod's Defs/ directory with entries like this:
+        
+        <Defs>
+            <IdeoRework.ReligionCategoryMemeDef>
+                <defName>CatMeme_YourMemeName</defName>
+                <targetDefName>YourMemeDefName</targetDefName>
+                <category>Religion</category>
+            </IdeoRework.ReligionCategoryMemeDef>
+        </Defs>
+        
+        The defName must be unique across all mods.
+        The targetDefName must match your MemeDef's defName exactly.
+        The category determines where your meme appears in the wizard:
+            "Religion" = Step 1 (Religion memes)
+            "Ideology" = Step 3 (Ideology memes)
+            "Both"     = appears in both steps
+        
+        To modify an existing entry, use XML patching:
+        
+        <Defs>
+            <IdeoRework.ReligionCategoryMemeDef Name="CatMeme_Proselytizer">
+                <category>Both</category>
+            </IdeoRework.ReligionCategoryMemeDef>
+        </Defs>
+    -->
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- RELIGION MEMES (23) — supernatural/spiritual worldviews -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- Structure memes (worldview foundations) -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_Animist</defName>
+        <targetDefName>Structure_Animist</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_TheistEmbodied</defName>
+        <targetDefName>Structure_TheistEmbodied</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_TheistAbstract</defName>
+        <targetDefName>Structure_TheistAbstract</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_Archist</defName>
+        <targetDefName>Structure_Archist</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_OriginChristian</defName>
+        <targetDefName>Structure_OriginChristian</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_OriginIslamic</defName>
+        <targetDefName>Structure_OriginIslamic</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_OriginHindu</defName>
+        <targetDefName>Structure_OriginHindu</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_OriginBuddhist</defName>
+        <targetDefName>Structure_OriginBuddhist</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <!-- Normal memes (specific beliefs) -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Proselytizer</defName>
+        <targetDefName>Proselytizer</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Blindsight</defName>
+        <targetDefName>Blindsight</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_HighLife</defName>
+        <targetDefName>HighLife</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_PainIsVirtue</defName>
+        <targetDefName>PainIsVirtue</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Cannibal</defName>
+        <targetDefName>Cannibal</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Nudism</defName>
+        <targetDefName>Nudism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_TreeConnection</defName>
+        <targetDefName>TreeConnection</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Darkness</defName>
+        <targetDefName>Darkness</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AnimalPersonhood</defName>
+        <targetDefName>AnimalPersonhood</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Tunneler</defName>
+        <targetDefName>Tunneler</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_MaleSupremacy</defName>
+        <targetDefName>MaleSupremacy</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_FemaleSupremacy</defName>
+        <targetDefName>FemaleSupremacy</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_HumanPrimacy</defName>
+        <targetDefName>HumanPrimacy</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_NaturePrimacy</defName>
+        <targetDefName>NaturePrimacy</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_FleshPurity</defName>
+        <targetDefName>FleshPurity</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- IDEOLOGY MEMES (9) — social/political worldviews -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- Structure meme (worldview foundation) -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Structure_Ideological</defName>
+        <targetDefName>Structure_Ideological</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <!-- Normal memes (specific beliefs) -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Transhumanist</defName>
+        <targetDefName>Transhumanist</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Supremacist</defName>
+        <targetDefName>Supremacist</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Loyalist</defName>
+        <targetDefName>Loyalist</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Guilty</defName>
+        <targetDefName>Guilty</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Individualist</defName>
+        <targetDefName>Individualist</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Collectivist</defName>
+        <targetDefName>Collectivist</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Rancher</defName>
+        <targetDefName>Rancher</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Raider</defName>
+        <targetDefName>Raider</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+</Defs>

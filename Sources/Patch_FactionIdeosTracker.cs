@@ -36,43 +36,9 @@ namespace IdeoRework
     {
         static void Postfix(FactionIdeosTracker __instance, IdeoGenerationParms parms)
         {
-            try
-            {
-                // Skip classic mode
-                if (Find.IdeoManager != null && Find.IdeoManager.classicMode) return;
-
-                var factionDef = parms.forFaction;
-                Log.Message($"[IdeoRework] ChooseOrGenerateIdeo postfix: faction={factionDef?.defName}");
-
-                if (factionDef == null) { Log.Warning("[IdeoRework] parms.forFaction is null"); return; }
-
-                // Skip if faction already has a religion ideo
-                if (FactionIdeoHelper.FindReligionIdeo(__instance) != null)
-                {
-                    Log.Message($"[IdeoRework] Faction {factionDef.defName} already has religion ideo, skipping");
-                    return;
-                }
-
-                var preset = PresetReligions.GetReligionForFaction(factionDef);
-                Log.Message($"[IdeoRework] Preset for {factionDef.defName}: {preset?.id ?? "null"}");
-
-                if (preset == null) return;
-
-                var religionIdeo = PresetReligions.CreateReligionIdeo(preset, factionDef);
-                if (religionIdeo != null)
-                {
-                    FactionIdeoHelper.AddMinorIdeo(__instance, religionIdeo);
-                    Log.Message($"[IdeoRework] Generated religion '{religionIdeo.name}' for faction '{factionDef.label}'");
-                }
-                else
-                {
-                    Log.Warning($"[IdeoRework] CreateReligionIdeo returned null for {factionDef.defName}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Warning("[IdeoRework] ChooseOrGenerateIdeo religion: " + ex.Message);
-            }
+            // Religion creation for NPC factions is handled exclusively by FinalizeInit.
+            // This postfix is intentionally a no-op to prevent duplicate religion creation
+            // during world generation (before the wizard and FinalizeInit run).
         }
     }
 

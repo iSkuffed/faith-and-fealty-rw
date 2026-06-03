@@ -9,6 +9,8 @@ SessionHandoff.md
 
 # Debug files (user-owned, not part of mod)
 DEBUG.md
+DESIGN.md
+AGENTS.md
 
 # OS files
 .DS_Store

@@ -1,210 +1,251 @@
-# Ideology & Religion Rework — Design Document
+# Ideology & Religion Rework — Design Philosophy
 
-## Overview
+## Core Principle
 
-> **Version:** 1.3.0 | **Created:** 2026-05-29 | **Last updated:** 2026-05-30 05:15 UTC
-> **Last updated by:** opencode/deepseek-v4-flash-free
+**This is a complete overhaul of RimWorld's Ideology system.** We own both Ideology and Religion entirely. We do not patch vanilla systems to work with us — we implement our own systems from scratch.
 
-RimWorld mod that replaces the classic ideology creation flow (`Page_ConfigureIdeo`) with a 4-step wizard that separates belief systems into two conceptual segments: **Religion** (supernatural/spiritual beliefs) and **Ideology** (social/political/moral values). 
+---
 
-### Phase 1 (COMPLETED!) — UI & Debugging
+## Design Philosophy
 
-WOOP WOOP!
+### 1. Our System is THE System
 
-### PHASE 2 (CURRENT) - SEPERATE RELIGION AND IDEOLOGY INTO SEPERATE BELIEFS TO BE GENERATED FOR EACH PAWN! ###
+Ideology and Religion are both ours. We don't add Religion alongside vanilla's Ideology — we replace the entire role/ability/icon system for both. Vanilla's base structures (memes, precepts, cultures, styles) still exist, but all assignment, tracking, and display logic is ours.
 
-Religion and Ideology will now become 2 distinct belief systems held by every pawn in the game, each with their own memes, precepts, and gameplay effects. 
+### 2. Never Patch When You Can Implement
 
-Target: RimWorld 1.6.4633 rev1273, netstandard2.1  
-Dependency: `brrainz.harmony` (Steam 2009463077)  
-Package ID: `skuffed.ideorework`
+If you're debating whether to patch vanilla's code or implement your own system, **always implement your own**. Patches are fragile, break on updates, and create cascading issues. Custom code works once and works forever.
+
+**Bad:** "Let me patch `Precept_RoleSingle.Assign()` to prevent cross-ideo unassignment"
+**Good:** "Let me implement `IdeoRoleManager` that directly sets `chosenPawn.pawn` without calling `Assign()`"
+
+### 3. Complex But Robust ONCE
+
+Implement a complicated but robust solution once rather than spending time troubleshooting patches that repeatedly fail. Complexity in our own code is manageable. Complexity in patches is fragile and unpredictable.
+
+**Pattern:** When a patch fails, don't try to fix it. Replace it with custom code.
+
+### 4. No Compromises
+
+Don't compromise with vanilla's systems. If vanilla's code doesn't work with our dual-system approach, we bypass it entirely. We don't try to make vanilla understand our system — we make our system work independently.
+
+### 5. Simple Hooks, Complex Logic
+
+Use simple Harmony hooks only to observe when things happen (ritual completion, pawn death, gizmo display). Implement all complex logic in our own code. Hooks should be observation points, not behavior modifiers.
+
+**Good hook:** Postfix on `RitualOutcomeEffectWorker_RoleChange.Apply()` to detect ritual completion
+**Bad hook:** Prefix/postfix on `Precept_RoleSingle.Assign()` with recursion guards and state restoration
+
+---
 
 ## Architecture
 
-```
-IdeoReworkMod (static ctor, Harmony init)
-  └─ Patch_PageChooseIdeoPreset_DoCustomize (Harmony prefix)
-       └─ intercepts Page_ChooseIdeoPreset.DoCustomize(fluid=false)
-       └─ opens Dialog_TwoStepIdeoWizard instead of Page_ConfigureIdeo
-       └─ returns false (= skip original method)
-  └─ Dialog_TwoStepIdeoWizard (Window)
-       └─ 4-step wizard with navigation
-  └─ BeliefCategoryLookup (static dict)
-       └─ maps MemeDef.defName → Religion/Ideology
-  └─ (no other patches exist)
-```
-
-## Project Structure
+### Three-Layer System
 
 ```
-ideorework/
-├── Sources/
-│   ├── IdeoReworkMod.cs          # Entry point, static ctor Harmony patching
-│   ├── Patch_PageChooseIdeoPreset.cs  # Harmony prefix on DoCustomize
-│   ├── Dialog_TwoStepIdeoWizard.cs    # Core 4-step wizard dialog
-│   ├── BeliefCategory.cs              # Meme→Religion/Ideology classification
-│   ├── IdeoRework.csproj              # .NET project file
-│   ├── build.sh                       # Build script
-│   └── obj/                           # Build artifacts
-├── About/
-│   └── About.xml                      # Mod metadata
-├── LoadFolders.xml                     # Folder routing for 1.6
-├── 1.6/
-│   └── Assemblies/
-│       └── IdeoRework.dll             # Built assembly
-└── DESIGN.md                          # This file
+┌─────────────────────────────────────────────────────────────┐
+│                    OUR SYSTEM (Everything)                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  IdeoRoleManager — Role assignment for both systems  │   │
+│  │  IdeoAbilityManager — Ability tracking for both      │   │
+│  │  UnifiedIconManager — Icon drawing for both          │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                    HOOKS (Simple, Robust)                    │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  Patch_RitualOutcomeEffectWorker_RoleChange           │   │
+│  │  Patch_Pawn_AbilityTracker_GetGizmos                  │   │
+│  │  Patch_ColonistBarColonistDrawer                      │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                    VANILLA (Base Only)                       │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │  Memes, Precepts, Cultures, Styles (structural data) │   │
+│  │  Role requirements (validation only)                  │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## 4-Step Wizard Flow
+### Key Components
 
-```
-[ReligionMemes] → [ReligionCustomize] → [IdeologyMemes] → [IdeologyCustomize] → [Finish]
-   Step 1              Step 2               Step 3              Step 4
-```
-
-### Step 1: ReligionMemes
-- Player selects memes from the Religion category (supernatural/spiritual)
-- Structure memes (worldview foundations) are single-select (radio button behavior)
-- Normal memes are multi-select, checked against exclusion groups
-- Exclusion groups are hardcoded in `Dialog_TwoStepIdeoWizard.ExclusionGroups`
-- Uses `IdeoUIUtility.DoMeme()` for meme card rendering with `Widgets.DrawBox` for card frames
-
-### Step 2: ReligionCustomize
-- Creates a temporary `Ideo` from selected Religion memes
-- Calls `IdeoUIUtility.DoPrecepts()` for precept editing with `(IdeoEditMode)2`
-- Text field for naming the religion
-- Clicking a meme chip navigates back to Step 1
-
-### Step 3: IdeologyMemes
-- Same layout as Step 1 but filters to Ideology category memes
-- Same multi-select + exclusion group behavior
-
-### Step 4: IdeologyCustomize
-- Same layout as Step 2 but for ideology memes
-- Separate name field for ideology name (string currently stored but may not be used)
-
-### Finish (OnWizardComplete)
-1. Merges `selectedReligionMemes + selectedIdeologyMemes` into `allMemes`
-2. Validates at least one Structure meme exists across both sets
-3. Creates final `Ideo` with merged meme list
-4. Sets `Page_ChooseIdeoPreset.presetSelection = CustomFixed` via reflection
-5. Sets `Page_ChooseIdeoPreset.classicIdeo = finalIdeo` via reflection
-6. Calls `Page_ChooseIdeoPreset.AssignIdeoToPlayer(finalIdeo)` via reflection
-7. Regenerates starting pawns via `ScenPart_ConfigPage_ConfigureStartingPawns.GenerateStartingPawns()` reflection
-8. Navigates to `parentPage.next` (= `Page_ConfigureStartingPawns`)
-
-### Step 4.5 After Merger (ideology assigned)
-- Initializes `Ideo.style` field (IdeoStyleTracker) if null — prevents NRE in `RecalculateAvailableStyleItems` during pawn generation
-- Calls `IdeoStyleTracker.RecalculateAvailableStyleItems()` directly
-
-## Classification System (BeliefCategory.cs)
-
-### Religion category (supernatural/spiritual)
-| defName | Type |
+| Component | Purpose |
 |---|---|
-| Structure_Animist, Structure_TheistEmbodied, Structure_TheistAbstract, Structure_Archist, Structure_OriginChristian, Structure_OriginIslamic, Structure_OriginHindu, Structure_OriginBuddhist | Structure |
-| Proselytizer, Blindsight, HighLife, PainIsVirtue, Cannibal, Nudism, TreeConnection, Darkness, AnimalPersonhood, Tunneler | Normal |
-| MaleSupremacy, FemaleSupremacy, HumanPrimacy, NaturePrimacy, FleshPurity | Normal (moved from Ideology) |
+| `IdeoRoleManager` | Manages role assignment for both ideology and religion. Directly sets `chosenPawn.pawn` without calling vanilla's `Assign()`. |
+| `IdeoAbilityManager` | Creates and tracks abilities for both systems. Uses `AbilityUtility.MakeAbility()` to create abilities. |
+| `UnifiedIconManager` | Draws icons for both systems on the colonist bar using `GUI.DrawTexture`. |
+| `ReligionLeaderTracker` | Stores the religion leader pawn reference. Used by `IdeoRoleManager`. |
 
-### Ideology category (social/political)
-| defName | Type |
-|---|---|
-| Structure_Ideological | Structure |
-| Transhumanist, Supremacist, Loyalist, Guilty, Individualist, Collectivist, Rancher, Raider | Normal |
+---
 
-### Exclusion Groups
+## Technical Notes
+
+### Role Assignment
+
+- `Precept_RoleSingle.chosenPawn` is a **public field** of type `IdeoRoleInstance` — no reflection needed
+- `IdeoRoleInstance.pawn` is the assigned pawn — directly settable
+- `Precept_RoleSingle.Notify_PawnAssigned(pawn)` must be called after setting `chosenPawn.pawn`
+- Never call `Precept_RoleSingle.Assign()` for religion roles — it triggers cross-ideo unassignment
+
+### Ability Creation
+
+- `AbilityUtility.MakeAbility(def, pawn, precept)` is the correct way to create abilities
+- `Ability.Initialize()` creates comps, assigns unique ID, wires verb, sets charges
+- `Ability.GetGizmos()` lazily creates `Command_Ability` gizmo via `Activator.CreateInstance`
+- Cooldowns are persisted via absolute ticks — they survive save/load
+
+### Gizmo Display
+
+- `Pawn_AbilityTracker.GetGizmos()` is an iterator method — use `IEnumerable` wrapping for hooks
+- Never try to mutate `__result` directly on iterator methods — always replace with a new `IEnumerable`
+- `Ability.GetGizmos()` returns `Command` objects — yield them directly in the wrapper
+
+### Icon Drawing
+
+- `ColonistBarColonistDrawer.DrawColonist(Rect rect, ...)` receives the full entry rect
+- Icons are drawn at bottom-left: `new Rect(rect.x + 1, rect.yMax - iconSize - 1, iconSize, iconSize)`
+- Use `Find.ColonistBar.Scale` for proper scaling
+- Vanilla's icon size is 16x16 at scale 1.0
+
+### XML Framework
+
+- **Sorting Defs** categorize memes as Religion/Ideology/Both
+- **Content Defs** define preset religions for AI factions
+- Default category for uncategorized memes: "Ideology"
+- Default category for uncategorized precepts/styles: "Both"
+- Cultures don't need sorting — they're universal
+- Structures are categorized through memes (they ARE memes)
+
+### Cooldown System
+
+- Non-certainty abilities share cooldowns via `Leader` group (10 days per pawn)
+- Certainty abilities use per-pawn independent cooldowns via `Moralist` group (3 days)
+- Cooldowns are per-caster, not per-target — different pawns can use abilities independently
+- Cooldowns are persisted via absolute ticks — they survive save/load
+
+---
+
+## Anti-Patterns to Avoid
+
+### ❌ Patching Vanilla's Role System
+
+```csharp
+// DON'T: Patch Precept_RoleSingle.Assign with prefix/postfix
+[HarmonyPatch(typeof(Precept_RoleSingle))]
+[HarmonyPatch("Assign")]
+public static class Patch_Precept_RoleSingle_Assign
+{
+    static bool isRestoring;
+    static void Postfix(...)
+    {
+        if (isRestoring) return;
+        isRestoring = true;
+        // Complex restoration logic...
+        isRestoring = false;
+    }
+}
 ```
-MaleSupremacy ↔ FemaleSupremacy
-HumanPrimacy  ↔ NaturePrimacy
-FleshPurity   ↔ Transhumanist
-FleshPurity   ↔ HighLife
-AnimalPersonhood ↔ Rancher
+
+**Why it fails:** Vanilla's `Assign()` unassigns other leader roles across all ideos. Patching it requires recursion guards, state restoration, and fragile timing.
+
+**Better:** Implement `IdeoRoleManager` that directly sets `chosenPawn.pawn` without calling `Assign()`.
+
+### ❌ Patching Vanilla's Ability System
+
+```csharp
+// DON'T: Patch AllAbilitiesForReading with complex logic
+[HarmonyPatch(typeof(Pawn_AbilityTracker))]
+[HarmonyPatch("AllAbilitiesForReading", MethodType.Getter)]
+public static class Patch_Pawn_AbilityTracker
+{
+    static void Postfix(ref List<Ability> __result, ...)
+    {
+        // Complex ability merging logic...
+    }
+}
 ```
 
-## Reflection Accessed Members
+**Why it fails:** `AllAbilitiesForReading` is a getter that returns a cached list. Modifying it requires understanding caching, dirty flags, and ordering.
 
-### Page_ChooseIdeoPreset
-- **Field `presetSelection`**: Enum type, set to `"CustomFixed"` to indicate custom ideo
-- **Field `classicIdeo`**: `Ideo` reference for the custom ideo
-- **Method `AssignIdeoToPlayer(Ideo)`**: Assigns the ideo to the player faction
+**Better:** Implement `IdeoAbilityManager` that tracks abilities independently. Use `Pawn_AbilityTracker.GetGizmos()` with `IEnumerable` wrapping to display them.
 
-### ScenPart_ConfigPage_ConfigureStartingPawns
-- **Method `ClearAllStartingPawns()`**: Clears pawn list
-- **Method `GenerateStartingPawns()`**: (Re)generates starting pawns
-- Found via `Find.Scenario.parts` list → type name match
+### ❌ Patching Vanilla's Icon System
 
-### Ideo internals (in SetupIdeo)
-- **Field `precepts`**: `List<Precept>` — must be initialized to empty list before `RecachePrecepts()` to avoid NRE
-- **Field `factionIdeoWeaponPairs`**: Generic `List<FactionIdeoWeaponPair>` — must be initialized before `RecachePrecepts()` to avoid NRE in `CanAddPreceptAllFactions`
-
-### Ideo style field (in OnWizardComplete)
-- **Field `style`**: `IdeoStyleTracker` — `new Ideo()` leaves this null. Must initialize before `AssignIdeoToPlayer` to prevent NRE in `GetFrequency` / `RecalculateAvailableStyleItems` during pawn generation.
-- `IdeoStyleTracker` is a standalone class in `RimWorld` namespace (NOT a nested class).
-- Constructor takes one `Ideo` parameter.
-- `RecalculateAvailableStyleItems()` must be called after construction.
-
-## Known Issues & Edge Cases (PHASE 1) (ASSUME RESOLVED UNTIL FURTHER NOTICE)
-
-### `Ideo` Constructor Leaves Internal Fields Null
-`new Ideo()` does not initialize `precepts`, `factionIdeoWeaponPairs`, or `style` (IdeoStyleTracker). These must be manually initialized before any recache or pawn generation operations. This is the primary source of fragility when constructing ideos outside the vanilla preset system — consider replacing manual `new Ideo()` with `IdeoGenerator.GenerateIdeo()` if more null fields surface.
-
-### Pawn List Emptied By Ideo Assignment
-`AssignIdeoToPlayer` clears `Find.GameInitData.startingAndOptionalPawns`. Pawns must be regenerated by calling `GenerateStartingPawns()` on the matching `ScenPart_ConfigPage_ConfigureStartingPawns` instance found in `Find.Scenario.parts`.
-
-### `ApplySelectedStylesToIdeo` Crashes
-This method on `Page_ChooseIdeoPreset` NREs when called from the wizard context. It was removed from the flow entirely.
-
-### Fluid Ideology Not Intercepted
-The Harmony prefix on `DoCustomize` checks `fluid` parameter — returns `true` (pass through to vanilla) if fluid. Only classic (non-fluid) customization is intercepted.
-
-### Names From Steps 2 and 4
-Religion name and ideology name are stored in fields but are NOT applied to the final ideo. The `finalIdeo.name` is not set. This is a known gap.
-
-### Building
-
-**One-liner (from project root):**
-```
-dotnet build Sources/IdeoRework.csproj
+```csharp
+// DON'T: Try to access private fields via reflection
+static void Postfix(Pawn colonist, ref List<object> ___tmpIconsToDraw)
+{
+    // Type mismatch between List<IconDrawCall> and List<object>...
+}
 ```
 
-**Full path (works from anywhere):**
+**Why it fails:** `IconDrawCall` is a private struct. `List<object>` can't hold it. `IList` works but is fragile.
+
+**Better:** Implement `UnifiedIconManager` that draws icons directly via `GUI.DrawTexture` in a `DrawColonist` postfix.
+
+### ❌ Blind OffsetCertainty Mirror
+
+```csharp
+// DON'T: Mirror all ideology certainty changes to religion
+static void Postfix(Pawn_IdeoTracker __instance, float offset)
+{
+    // Blindly apply same offset to religion...
+}
 ```
-dotnet build /home/skuffed/.local/share/Steam/steamapps/workshop/content/294100/ideorework/Sources/IdeoRework.csproj
+
+**Why it fails:** Not all certainty changes are relevant to religion. A pawn doing something their ideology disapproves of shouldn't affect their religion certainty.
+
+**Better:** Implement context-aware certainty changes that check if the event is relevant to the specific system.
+
+---
+
+## Testing Philosophy
+
+When something doesn't work:
+1. Don't try to fix the patch
+2. Don't add more patches to work around the issue
+3. Implement your own system instead
+4. Test thoroughly
+5. Move on
+
+The goal is to ship a working product, not to prove that vanilla's code can be made compatible with our design.
+
+---
+
+## File Organization
+
+```
+Sources/
+├── Defs/
+│   ├── ReligionCategoryMemeDef.cs      # Sorting Def for memes
+│   └── ReligionPresetDef.cs            # Content Def for preset religions
+├── IdeoRoleManager.cs                  # Role assignment for both systems
+├── IdeoAbilityManager.cs               # Ability tracking for both systems
+├── UnifiedIconManager.cs               # Icon drawing for both systems
+├── ReligionLeaderTracker.cs            # Stores religion leader pawn
+├── ReligionConversionTracker.cs        # Handles religion conversion
+├── CognitiveDissonanceTracker.cs       # Handles dissonance between systems
+├── PresetReligions.cs                  # Preset religion definitions
+├── BeliefCategory.cs                   # Meme categorization
+├── ReligionDefLoader.cs                # Loads sorting defs
+├── Dialog_BeginReligionRitual.cs       # Custom ritual dialog
+├── IdeoReworkGameComponent.cs          # Save/load persistence
+├── IdeoReworkMod.cs                    # Mod initialization
+├── SessionRegistry.cs                  # Session management
+├── HardOverride.cs                     # Hard override for pawn assignment
+├── Patch_*.cs                          # Simple hooks (observation only)
+└── CompAbilityEffect_*.cs              # Custom ability effects
 ```
 
-- Output: `1.6/Assemblies/IdeoRework.dll`
-- NuGet dependency: `Lib.Harmony.Ref 2.3.1`
-- Game DLLs referenced from `RimWorldLinux_Data/Managed/Assembly-CSharp.dll` (and related Unity DLLs)
-- After building, restart RimWorld (or reload) to pick up the new DLL. No additional deployment steps needed.
+---
 
-## Development Environment
-- Game path: `/home/skuffed/.local/share/Steam/steamapps/common/RimWorld/`
-- Mod path: same root + `/Mods/ideorework/` (symlinked from workshop content directory)
-- Editor: VS Code with C#/OmniSharp
-- Debugging: Game output log (`~/config/unity3d/Ludeon Studios/RimWorld/Player.log`)
+## Remember
 
-## Changelog
-
-### 1.3.0 — 2026-05-30
-- Fixed `ideo.foundation.place` being null: picks a random `PlaceDef` before `RegenerateDescription()` — resolves all `place_foeSoldiers`/`place_foeLeader` grammar unresolvable errors and `foeSoldiers → ERR:` fallback
-- Fixed `ideo.foundation.RandomizeStyles()` calling wrong class: now invokes private `Ideo.RandomizeStyles()` via reflection instead — resolves style recalculation NRE
-
-### 1.2.0 — 2026-05-30
-- `SetupIdeo` now runs the full vanilla `IdeoFoundation` Init chain minus `RandomizeMemes`: calls `GenerateTextSymbols()`, `GenerateLeaderTitle()`, `RandomizeIcon()`, `RegenerateDescription(true)`, and `RandomizeStyles()` after `InitPrecepts()`
-- Added null-guard initialization for `usedSymbolPacks` and `usedSymbols` fields (prevents `TryGuessChosenSymbolPack` NRE during precept name generation)
-- Changed `(IdeoEditMode)2` (Dev) to `IdeoEditMode.GameStart` in `DrawCustomizationStep` — prevents UI from triggering redundant `RandomizePrecepts` calls and fixes precept name display
-- `RandomizeStyles()` call populates `thingStyleCategories` with meme-appropriate style categories, fixing `IdeoStyleTracker.GetFrequency` NRE during pawn generation
-
-### 1.1.0 — 2026-05-30
-- `SetupIdeo` now creates `IdeoFoundation` with `InitPrecepts()` to auto-generate precepts from selected memes (Bug 1 fix)
-- `SetupIdeo` initializes `thingStyleCategories` to prevent NRE in `IdeoStyleTracker.RecalculateAvailableStyleItems()` (Bug 2 root cause fix)
-- `IdeoStyleTracker` init moved into `SetupIdeo`; duplicate block removed from `OnWizardComplete`
-- `SetupIdeo` now takes `List<MemeDef> selectedMemes` parameter instead of relying on pre-set `ideo.memes`
-
-### 1.0.0 — 2026-05-30
-- Initial release: 4-step wizard replacing `Page_ConfigureIdeo`
-- Meme classification into Religion vs Ideology categories
-- Hardcoded mutual exclusivity groups for conflicting memes
-- `Ideo` internal list initialization fix for `RecachePrecepts()`
-- Starting pawn regeneration after ideo assignment via reflection
-- `IdeoStyleTracker` initialization fix for pawn generation NRE
+- **This is a complete overhaul**, not a compatibility patch
+- **Own both systems** — Ideology AND Religion are ours
+- **Never patch when you can implement** — custom code works once and forever
+- **Complex but robust ONCE** — implement the right solution, not the easy one
+- **No compromises** — if vanilla doesn't work with us, we bypass it entirely

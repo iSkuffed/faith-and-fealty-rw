@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <!-- Convert Religion -->
+  <AbilityDef>
+    <defName>ConvertReligion</defName>
+    <label>convert religion</label>
+    <description>Attempt to convert someone to your religion. This will reduce the target's certainty in their own religious beliefs.</description>
+    <groupDef>Moralist</groupDef>
+    <iconPath>UI/Abilities/Convert</iconPath>
+    <warmupMoteSocialSymbol>Things/Mote/SpeechSymbols/Convert</warmupMoteSocialSymbol>
+    <warmupSound>MoralistAbility_Warmup</warmupSound>
+    <hotKey>Misc12</hotKey>
+    <jobDef>CastAbilityOnThingMelee</jobDef>
+    <stunTargetWhileCasting>True</stunTargetWhileCasting>
+    <showPsycastEffects>False</showPsycastEffects>
+    <displayGizmoWhileUndrafted>True</displayGizmoWhileUndrafted>
+    <disableGizmoWhileUndrafted>False</disableGizmoWhileUndrafted>
+    <uiOrder>1</uiOrder>
+    <showWhenDrafted>false</showWhenDrafted>
+    <hostile>false</hostile>
+    <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <comps>
+      <li Class="IdeoRework.CompProperties_ConvertReligion">
+        <convertPowerFactor>2</convertPowerFactor>
+      </li>
+      <li Class="CompProperties_AbilityMustBeCapableOf">
+        <workTags>
+          <li>Social</li>
+        </workTags>
+      </li>
+    </comps>
+    <verbProperties>
+      <verbClass>Verb_CastAbilityTouch</verbClass>
+      <drawAimPie>False</drawAimPie>
+      <range>-1</range>
+      <warmupTime>3.0</warmupTime>
+      <targetParams>
+        <canTargetBuildings>False</canTargetBuildings>
+        <canTargetSubhumans>false</canTargetSubhumans>
+        <neverTargetHostileFaction>True</neverTargetHostileFaction>
+      </targetParams>
+    </verbProperties>
+  </AbilityDef>
+
+  <!-- Reassure Religion -->
+  <AbilityDef>
+    <defName>ReassureReligion</defName>
+    <label>reassure religion</label>
+    <description>Increase someone's certainty in their religious beliefs.</description>
+    <groupDef>Moralist</groupDef>
+    <iconPath>UI/Abilities/Reassure</iconPath>
+    <warmupMoteSocialSymbol>UI/Abilities/Reassure</warmupMoteSocialSymbol>
+    <warmupSound>MoralistAbility_Warmup</warmupSound>
+    <hotKey>Misc12</hotKey>
+    <jobDef>CastAbilityOnThingMelee</jobDef>
+    <stunTargetWhileCasting>True</stunTargetWhileCasting>
+    <showPsycastEffects>False</showPsycastEffects>
+    <displayGizmoWhileUndrafted>True</displayGizmoWhileUndrafted>
+    <disableGizmoWhileUndrafted>False</disableGizmoWhileUndrafted>
+    <uiOrder>2</uiOrder>
+    <showWhenDrafted>false</showWhenDrafted>
+    <hostile>false</hostile>
+    <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <comps>
+      <li Class="IdeoRework.CompProperties_ReassureReligion">
+        <baseCertaintyGain>0.2</baseCertaintyGain>
+      </li>
+      <li Class="CompProperties_AbilityMustBeCapableOf">
+        <workTags>
+          <li>Social</li>
+        </workTags>
+      </li>
+    </comps>
+    <verbProperties>
+      <verbClass>Verb_CastAbilityTouch</verbClass>
+      <drawAimPie>False</drawAimPie>
+      <range>-1</range>
+      <warmupTime>3.0</warmupTime>
+      <targetParams>
+        <canTargetBuildings>False</canTargetBuildings>
+        <neverTargetHostileFaction>True</neverTargetHostileFaction>
+        <canTargetSubhumans>false</canTargetSubhumans>
+      </targetParams>
+    </verbProperties>
+  </AbilityDef>
+
+  <!-- Religious Speech -->
+  <AbilityDef ParentName="SpeechBase">
+    <defName>ReligiousSpeech</defName>
+    <label>religious speech</label>
+    <description>Initiate a religious speech. If it goes well, listeners will gain improved mood, respect for the speaker, and possibly new inspirations.</description>
+    <groupDef>Leader</groupDef>
+    <iconPath>UI/Abilities/LeaderSpeech</iconPath>
+    <showWhenDrafted>false</showWhenDrafted>
+    <comps>
+      <li Class="CompProperties_AbilityStartRitual">
+        <ritualDef>LeaderSpeech</ritualDef>
+        <allowedForChild>false</allowedForChild>
+      </li>
+    </comps>
+  </AbilityDef>
+
+  <!-- Faith Drive -->
+  <AbilityDef>
+    <defName>FaithDrive</defName>
+    <label>faith drive</label>
+    <description>Call on a person to work harder through the power of faith.</description>
+    <jobDef>CastAbilityOnThingMelee</jobDef>
+    <iconPath>UI/Abilities/WorkDrive</iconPath>
+    <warmupMoteSocialSymbol>UI/Abilities/WorkDrive</warmupMoteSocialSymbol>
+    <stunTargetWhileCasting>True</stunTargetWhileCasting>
+    <showPsycastEffects>False</showPsycastEffects>
+    <displayGizmoWhileUndrafted>True</displayGizmoWhileUndrafted>
+    <disableGizmoWhileUndrafted>False</disableGizmoWhileUndrafted>
+    <showWhenDrafted>false</showWhenDrafted>
+    <groupDef>Leader</groupDef>
+    <hotKey>Misc12</hotKey>
+    <uiOrder>2</uiOrder>
+    <warmupStartSound>WorkDrive_Warmup</warmupStartSound>
+    <hostile>false</hostile>
+    <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <statBases>
+      <Ability_Duration>3000</Ability_Duration>
+    </statBases>
+    <verbProperties>
+      <verbClass>Verb_CastAbilityTouch</verbClass>
+      <drawAimPie>False</drawAimPie>
+      <range>-1</range>
+      <warmupTime>3.0</warmupTime>
+      <targetParams>
+        <canTargetAnimals>false</canTargetAnimals>
+        <canTargetSelf>false</canTargetSelf>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetMechs>false</canTargetMechs>
+        <onlyTargetColonists>true</onlyTargetColonists>
+        <canTargetSubhumans>false</canTargetSubhumans>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li Class="CompProperties_AbilityGiveHediff">
+        <compClass>CompAbilityEffect_GiveHediff</compClass>
+        <hediffDef>WorkDrive</hediffDef>
+        <onlyBrain>True</onlyBrain>
+        <applicableToMechs>False</applicableToMechs>
+        <canTargetBaby>False</canTargetBaby>
+      </li>
+    </comps>
+  </AbilityDef>
+
+  <!-- Holy Command -->
+  <AbilityDef>
+    <defName>HolyCommand</defName>
+    <label>holy command</label>
+    <description>Create an aura that boosts the combat skills of everyone nearby through holy authority.</description>
+    <jobDef>CastAbilityOnThing</jobDef>
+    <targetRequired>False</targetRequired>
+    <canUseAoeToGetTargets>False</canUseAoeToGetTargets>
+    <iconPath>UI/Abilities/CombatCommand</iconPath>
+    <warmupMoteSocialSymbol>UI/Abilities/CombatCommand</warmupMoteSocialSymbol>
+    <stunTargetWhileCasting>True</stunTargetWhileCasting>
+    <showPsycastEffects>False</showPsycastEffects>
+    <displayGizmoWhileUndrafted>True</displayGizmoWhileUndrafted>
+    <disableGizmoWhileUndrafted>False</disableGizmoWhileUndrafted>
+    <groupDef>Leader</groupDef>
+    <hotKey>Misc12</hotKey>
+    <uiOrder>3</uiOrder>
+    <warmupStartSound>CombatCommand_Warmup</warmupStartSound>
+    <casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
+    <statBases>
+      <Ability_Duration>1000</Ability_Duration>
+      <Ability_EffectRadius>9.9</Ability_EffectRadius>
+    </statBases>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <warmupTime>0.5</warmupTime>
+      <range>9.9</range>
+      <drawAimPie>False</drawAimPie>
+      <requireLineOfSight>False</requireLineOfSight>
+      <targetParams>
+        <canTargetSelf>true</canTargetSelf>
+        <canTargetPawns>false</canTargetPawns>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetAnimals>false</canTargetAnimals>
+        <canTargetHumans>false</canTargetHumans>
+        <canTargetMechs>false</canTargetMechs>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li Class="CompProperties_AbilityGiveHediff">
+        <compClass>CompAbilityEffect_GiveHediff</compClass>
+        <hediffDef>CombatCommand</hediffDef>
+        <onlyBrain>True</onlyBrain>
+        <onlyApplyToSelf>True</onlyApplyToSelf>
+        <replaceExisting>true</replaceExisting>
+      </li>
+    </comps>
+  </AbilityDef>
+
+  <!-- Religious Trial -->
+  <AbilityDef ParentName="SpeechBase">
+    <defName>ReligiousTrial</defName>
+    <label>religious trial</label>
+    <description>Charge someone with a wrongdoing and initiate a religious trial.</description>
+    <groupDef>Leader</groupDef>
+    <targetRequired>True</targetRequired>
+    <iconPath>UI/Icons/Rituals/Trial</iconPath>
+    <gizmoClass>Command_AbilityTrial</gizmoClass>
+    <uiOrder>4</uiOrder>
+    <comps>
+      <li Class="CompProperties_AbilityStartTrial">
+        <ritualDef>Trial</ritualDef>
+        <ritualDefForPrisoner>TrialPrisoner</ritualDefForPrisoner>
+        <ritualDefForMentalState>TrialMentalState</ritualDefForMentalState>
+        <targetRoleId>convict</targetRoleId>
+      </li>
+    </comps>
+    <verbProperties>
+      <targetParams>
+        <canTargetAnimals>false</canTargetAnimals>
+        <canTargetSelf>false</canTargetSelf>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetMechs>false</canTargetMechs>
+        <canTargetSubhumans>false</canTargetSubhumans>
+        <onlyTargetColonistsOrPrisonersOrSlavesAllowMinorMentalBreaks>true</onlyTargetColonistsOrPrisonersOrSlavesAllowMinorMentalBreaks>
+      </targetParams>
+    </verbProperties>
+  </AbilityDef>
+</Defs>

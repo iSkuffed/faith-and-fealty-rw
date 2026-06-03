@@ -39,10 +39,10 @@ namespace IdeoRework
                 // Draw name
                 Widgets.Label(new Rect(plateRect.x + 22f + 5f, plateRect.y, plateWidth - 22f - 5f, 22f), religionIdeo.name);
 
-                // Click to open ideo info
+                // Click to open Religions UI
                 if (Widgets.ButtonInvisible(plateRect))
                 {
-                    IdeoUIUtility.OpenIdeoInfo(religionIdeo);
+                    Find.WindowStack.Add(new Dialog_ReligionList());
                 }
 
                 // Single tooltip — fixed uniqueId prevents duplicate registration
@@ -50,6 +50,15 @@ namespace IdeoRework
                 {
                     TaggedString tip = "Religion"
                         + "\n" + religionIdeo.name.Colorize(ColoredText.TipSectionTitleColor);
+
+                    // Show leader title if this pawn is the religion leader
+                    if (pawn == ReligionLeaderTracker.ReligionLeader)
+                    {
+                        var title = ReligionLeaderTracker.GetLeaderTitle();
+                        if (title != null)
+                            tip += "\n" + title.Colorize(ColoredText.TipSectionTitleColor);
+                    }
+
                     tip += "\n" + "Certainty".Translate().CapitalizeFirst() + ": " + pawn.GetReligionCertainty().ToStringPercent();
                     tip += "\n\n" + "ClickForMoreInfo".Translate().Colorize(ColoredText.SubtleGrayColor);
                     TooltipHandler.TipRegion(plateRect, tip.Resolve());

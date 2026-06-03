@@ -1,19 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HarmonyLib;
 using RimWorld;
 using Verse;
 
 namespace IdeoRework
 {
-    public class PresetReligion
-    {
-        public string id;
-        public string baseName;
-        public string structureMeme;
-        public List<string> normalMemes;
-    }
-
     public static class PresetReligions
     {
         // ── Tracking set for religion ideos we've created ──────────────────
@@ -33,76 +26,38 @@ namespace IdeoRework
             PlayerReligionIdeo = null;
         }
 
-        // ── The 4 preset religions ──────────────────────────────────────────
+        // ── Faction → Religion mapping (from XML) ─────────────────────────
 
-        public static readonly PresetReligion ChurchOfTheHolyLight = new PresetReligion
+        public static ReligionPresetDef GetReligionForFaction(FactionDef def)
         {
-            id = "holy_light",
-            baseName = "Church of the Holy Light",
-            structureMeme = "Structure_OriginChristian",
-            normalMemes = new List<string> { "Proselytizer", "FleshPurity" }
-        };
+            if (def == null) return null;
 
-        public static readonly PresetReligion FaithOfTheCrescent = new PresetReligion
-        {
-            id = "crescent",
-            baseName = "Faith of the Crescent",
-            structureMeme = "Structure_OriginIslamic",
-            normalMemes = new List<string> { "Proselytizer", "Collectivist" }
-        };
+            // Get all presets from XML
+            var presets = DefDatabase<ReligionPresetDef>.AllDefsListForReading;
+            if (presets == null || presets.Count == 0) return null;
 
-        public static readonly PresetReligion TheOldWays = new PresetReligion
-        {
-            id = "old_ways",
-            baseName = "The Old Ways",
-            structureMeme = "Structure_Animist",
-            normalMemes = new List<string> { "AnimalPersonhood", "TreeConnection" }
-        };
+            // Find matching preset based on faction whitelist/blacklist
+            foreach (var preset in presets)
+            {
+                // Check whitelist (if set, faction must be in list)
+                if (preset.factionWhitelist != null && preset.factionWhitelist.Count > 0)
+                {
+                    if (!preset.factionWhitelist.Contains(def.defName))
+                        continue;
+                }
 
-        public static readonly PresetReligion ImperialCult = new PresetReligion
-        {
-            id = "imperial_cult",
-            baseName = "Imperial Cult",
-            structureMeme = "Structure_Archist",
-            normalMemes = new List<string> { "Collectivist", "Loyalist", "HumanPrimacy" }
-        };
+                // Check blacklist (if set, faction must not be in list)
+                if (preset.factionBlacklist != null && preset.factionBlacklist.Count > 0)
+                {
+                    if (preset.factionBlacklist.Contains(def.defName))
+                        continue;
+                }
 
-        // ── Faction → Religion mapping ─────────────────────────────────────
+                return preset;
+            }
 
-        public static PresetReligion GetReligionForFaction(FactionDef def)
-        {
-            if (def == null) return ChurchOfTheHolyLight;
-
-            // Empire gets Imperial Cult
-            if (def.defName == "Empire")
-                return ImperialCult;
-
-            // Pirates and savage tribes get Old Ways
-            if (def.defName.Contains("Pirate") || def.defName.Contains("Savage"))
-                return TheOldWays;
-
-            // HoraxCult already has forced memes — skip
-            if (def.defName == "HoraxCult")
-                return null;
-
-            // Ancients already have forced memes — skip
-            if (def.defName.Contains("Ancients"))
-                return null;
-
-            // TradersGuild/Salvagers already have forced Shipborn — skip
-            if (def.defName == "TradersGuild" || def.defName == "Salvagers")
-                return null;
-
-            // Sanguophages — skip (forced Bloodfeeding)
-            if (def.defName == "Sanguophages")
-                return null;
-
-            // Tribes get Crescent
-            if (def.defName.Contains("Tribe"))
-                return FaithOfTheCrescent;
-
-            // Everything else (outlanders, player) gets Holy Light
-            return ChurchOfTheHolyLight;
+            // No matching preset — return first preset without whitelist
+            return presets.FirstOrDefault(p => p.factionWhitelist == null || p.factionWhitelist.Count == 0);
         }
 
         // ── Name randomization ─────────────────────────────────────────────
@@ -138,19 +93,19 @@ namespace IdeoRework
             "Scepter", "Phoenix", "Eternity", "Ascension"
         };
 
-        public static string GenerateReligionName(PresetReligion preset)
+        public static string GenerateReligionName(ReligionPresetDef preset)
         {
             try
             {
-                Rand.PushState(Find.TickManager.TicksGame ^ preset.id.GetHashCode());
+                Rand.PushState(Find.TickManager.TicksGame ^ preset.defName.GetHashCode());
 
                 string prefix, suffix;
-                if (preset.id == "old_ways")
+                if (preset.defName == "Preset_OldWays")
                 {
                     prefix = PaganNamePrefixes.RandomElement();
                     suffix = PaganNameSuffixes.RandomElement();
                 }
-                else if (preset.id == "imperial_cult")
+                else if (preset.defName == "Preset_ImperialCult")
                 {
                     prefix = ImperialNamePrefixes.RandomElement();
                     suffix = ImperialNameSuffixes.RandomElement();
@@ -172,30 +127,36 @@ namespace IdeoRework
 
         // ── Meme conflict validation ────────────────────────────────────────
 
-        public static List<MemeDef> GetValidReligionMemes(PresetReligion preset, FactionDef factionDef)
+        public static List<MemeDef> GetValidReligionMemes(ReligionPresetDef preset, FactionDef factionDef)
         {
             var result = new List<MemeDef>();
 
             // Add structure meme
-            var structureDef = DefDatabase<MemeDef>.GetNamedSilentFail(preset.structureMeme);
-            if (structureDef != null)
-                result.Add(structureDef);
+            if (!preset.structureMeme.NullOrEmpty())
+            {
+                var structureDef = DefDatabase<MemeDef>.GetNamedSilentFail(preset.structureMeme);
+                if (structureDef != null)
+                    result.Add(structureDef);
+            }
 
             // Add normal memes, filtering out any that conflict with faction
-            foreach (var memeName in preset.normalMemes)
+            if (preset.normalMemes != null)
             {
-                var memeDef = DefDatabase<MemeDef>.GetNamedSilentFail(memeName);
-                if (memeDef == null) continue;
-
-                // Check faction disallowed memes
-                if (factionDef != null && factionDef.disallowedMemes != null &&
-                    factionDef.disallowedMemes.Contains(memeDef))
+                foreach (var memeName in preset.normalMemes)
                 {
-                    Log.Message($"[IdeoRework] Skipping meme {memeName} for faction {factionDef.defName} (disallowed)");
-                    continue;
-                }
+                    var memeDef = DefDatabase<MemeDef>.GetNamedSilentFail(memeName);
+                    if (memeDef == null) continue;
 
-                result.Add(memeDef);
+                    // Check faction disallowed memes
+                    if (factionDef != null && factionDef.disallowedMemes != null &&
+                        factionDef.disallowedMemes.Contains(memeDef))
+                    {
+                        Log.Message($"[IdeoRework] Skipping meme {memeName} for faction {factionDef.defName} (disallowed)");
+                        continue;
+                    }
+
+                    result.Add(memeDef);
+                }
             }
 
             return result;
@@ -203,25 +164,19 @@ namespace IdeoRework
 
         // ── Create an Ideo from a preset ───────────────────────────────────
 
-        public static Ideo CreateReligionIdeo(PresetReligion preset, FactionDef forFaction)
+        public static Ideo CreateReligionIdeo(ReligionPresetDef preset, FactionDef forFaction)
         {
             // Return cached ideo if one exists for this preset
-            if (ReligionIdeoByPreset.TryGetValue(preset.id, out var cachedIdeo))
+            if (ReligionIdeoByPreset.TryGetValue(preset.defName, out var cachedIdeo))
             {
                 Log.Message($"[IdeoRework] Reusing cached religion '{cachedIdeo.name}' for faction '{forFaction?.defName}'");
                 return cachedIdeo;
             }
 
-            Log.Message($"[IdeoRework] CreateReligionIdeo: preset={preset.id}, faction={forFaction?.defName}");
+            Log.Message($"[IdeoRework] CreateReligionIdeo: preset={preset.defName}, faction={forFaction?.defName}");
 
             var memes = GetValidReligionMemes(preset, forFaction);
             Log.Message($"[IdeoRework] Valid memes: {string.Join(", ", memes.Select(m => m.defName))}");
-
-            if (!memes.Any())
-            {
-                Log.Warning("[IdeoRework] No valid memes for religion " + preset.id + " faction " + forFaction?.defName);
-                return null;
-            }
 
             try
             {
@@ -233,8 +188,38 @@ namespace IdeoRework
                 // Override memes with our preset memes
                 ideo.memes = new List<MemeDef>(memes);
 
+                // Apply deity name maker override to structure meme (if preset specifies one)
+                // This controls the grammar pack used for deity name generation
+                if (!preset.deityNameMakerOverride.NullOrEmpty())
+                {
+                    var structureMeme = ideo.StructureMeme;
+                    if (structureMeme != null)
+                    {
+                        var rulePack = DefDatabase<RulePackDef>.GetNamedSilentFail(preset.deityNameMakerOverride);
+                        if (rulePack != null)
+                            structureMeme.deityNameMakerOverride = rulePack;
+                    }
+                }
+
+                // Generate deities (uses structure meme's deityCount + deityNameMakerOverride)
+                if (ideo.foundation is IdeoFoundation_Deity deityFoundation)
+                {
+                    try { deityFoundation.GenerateDeities(); } catch { }
+                }
+
                 // Generate a randomized name
                 ideo.name = GenerateReligionName(preset);
+
+                // Set leader titles if specified
+                if (!preset.leaderTitleMale.NullOrEmpty())
+                    ideo.leaderTitleMale = preset.leaderTitleMale;
+                if (!preset.leaderTitleFemale.NullOrEmpty())
+                    ideo.leaderTitleFemale = preset.leaderTitleFemale;
+
+                // Set description if specified
+                if (!preset.description.NullOrEmpty())
+                    ideo.description = preset.description;
+
                 Log.Message($"[IdeoRework] Override memes: {string.Join(", ", ideo.memes.Select(m => m.defName))}");
 
                 // Recache precepts for the new memes
@@ -251,7 +236,7 @@ namespace IdeoRework
                 IdeoReworkGameComponent.SaveReligionIdeoIds();
 
                 // Cache by preset for sharing across factions
-                ReligionIdeoByPreset[preset.id] = ideo;
+                ReligionIdeoByPreset[preset.defName] = ideo;
 
                 Log.Message($"[IdeoRework] Religion ideo created: '{ideo.name}' for faction '{forFaction?.defName}'");
                 return ideo;
@@ -262,5 +247,59 @@ namespace IdeoRework
                 return null;
             }
         }
+
+        // ── Create Agnostic religion (no memes, no precepts) ─────────────
+
+        public static Ideo CreateAgnosticReligion(FactionDef forFaction)
+        {
+            // Check if already created
+            var existing = CreatedReligionIdeos.FirstOrDefault(i => i.name == "Agnostic");
+            if (existing != null) return existing;
+
+            try
+            {
+                var parms = new IdeoGenerationParms(forFaction ?? FactionDefOf.PlayerColony);
+                var ideo = IdeoGenerator.GenerateIdeo(parms);
+
+                // Blank placeholder — no memes, no precepts
+                ideo.memes = new List<MemeDef>();
+                ideo.ClearPrecepts();
+                ideo.name = "Agnostic";
+                ideo.description = "Those who hold no strong beliefs about the nature of existence. They remain open to many possibilities but commit to none.";
+                ideo.memberName = "Agnostic";
+                ideo.adjective = "agnostic";
+                ideo.leaderTitleMale = "Speaker";
+                ideo.leaderTitleFemale = "Speaker";
+
+                // Register with IdeoManager
+                if (!Find.IdeoManager.IdeosListForReading.Contains(ideo))
+                    Find.IdeoManager.Add(ideo);
+
+                // Track as a religion ideo
+                CreatedReligionIdeos.Add(ideo);
+
+                // Persist religion ideo IDs for save/load
+                IdeoReworkGameComponent.SaveReligionIdeoIds();
+
+                Log.Message($"[IdeoRework] Agnostic religion created");
+                return ideo;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[IdeoRework] CreateAgnosticReligion FAILED: {ex}");
+                return null;
+            }
+        }
+
+        // ── Get or create Agnostic religion ─────────────────────────────────
+
+        public static Ideo GetOrCreateAgnosticReligion()
+        {
+            var existing = CreatedReligionIdeos.FirstOrDefault(i => i.name == "Agnostic");
+            if (existing != null) return existing;
+
+            return CreateAgnosticReligion(FactionDefOf.PlayerColony);
+        }
+
     }
 }

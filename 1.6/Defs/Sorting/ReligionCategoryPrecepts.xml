@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <!--
+        RELIGION CATEGORY PRECEPT SORTING DEFS
+        =======================================
+        
+        These defs allow you to categorize precepts as Religion, Ideology, or Both.
+        This controls whether a precept appears only in religion, only in ideology, or both.
+        
+        Category values:
+            - "Religion"  = precept only appears in religion system
+            - "Ideology"  = precept only appears in ideology system
+            - "Both"      = precept appears in both systems
+        
+        Default (no entry): "Both" — all precepts appear in both systems by default.
+        You only need to add entries if you want to RESTRICT a precept to one system.
+        
+        
+        HOW TO MAKE A PATCH (for mod authors)
+        ======================================
+        
+        If your mod adds custom precepts and you want to restrict them to one system,
+        create an XML file in your mod's Defs/ directory with entries like this:
+        
+        <Defs>
+            <IdeoRework.ReligionCategoryPreceptDef>
+                <defName>CatPrecept_YourPreceptName</defName>
+                <targetDefName>YourPreceptDefName</targetDefName>
+                <category>Religion</category>
+            </IdeoRework.ReligionCategoryPreceptDef>
+        </Defs>
+        
+        The defName must be unique across all mods.
+        The targetDefName must match your PreceptDef's defName exactly.
+        
+        Examples:
+            "Religion" = prayer rituals, religious roles, spiritual practices
+            "Ideology" = political policies, social norms, economic rules
+            "Both"     = general moral beliefs that work in both contexts
+        
+        To modify an existing entry, use XML patching:
+        
+        <Defs>
+            <IdeoRework.ReligionCategoryPreceptDef Name="CatPrecept_ExistingDef">
+                <category>Both</category>
+            </IdeoRework.ReligionCategoryPreceptDef>
+        </Defs>
+    -->
+</Defs>
