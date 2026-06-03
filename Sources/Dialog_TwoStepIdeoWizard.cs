@@ -426,6 +426,18 @@ namespace IdeoRework
             }
             innerY += 38f;
 
+            // Deities section — drawn by IdeoFoundation_Deity.DoInfo
+            // Only visible if structure meme has deityCount > 0
+            try
+            {
+                if (currentIdeo.foundation != null)
+                    currentIdeo.foundation.DoInfo(ref innerY, width, IdeoEditMode.GameStart);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("[IdeoRework] DoInfo (deities) error: " + ex);
+            }
+
             // Narrative section
             DrawSectionHeader("Narrative",
                 "Write the core narrative of your " + (isReligion ? "religion" : "ideology") + ".",
@@ -455,18 +467,6 @@ namespace IdeoRework
             catch (Exception ex)
             {
                 Log.Warning("[IdeoRework] DoPrecepts error: " + ex);
-            }
-
-            // Deities section — drawn by IdeoFoundation_Deity.DoInfo
-            // Only visible if structure meme has deityCount > 0
-            try
-            {
-                if (currentIdeo.foundation != null)
-                    currentIdeo.foundation.DoInfo(ref innerY, width, IdeoEditMode.GameStart);
-            }
-            catch (Exception ex)
-            {
-                Log.Warning("[IdeoRework] DoInfo (deities) error: " + ex);
             }
 
             scrollViewHeight = innerY;

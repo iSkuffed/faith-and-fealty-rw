@@ -42,10 +42,10 @@ namespace IdeoRework
                 savedReligionIdeoIds = new List<int>();
             Scribe_Values.Look(ref savedReligionLeaderId, "religionLeaderId", -1);
             Scribe_Values.Look(ref savedReligionLeaderIdeoId, "religionLeaderIdeoId", -1);
-            Scribe_Collections.Look(ref savedIdeologyRoles, "savedIdeologyRoles", LookMode.Value);
-            Scribe_Collections.Look(ref savedReligionRoles, "savedReligionRoles", LookMode.Value);
-            Scribe_Collections.Look(ref savedIdeologyAbilities, "savedIdeologyAbilities", LookMode.Value);
-            Scribe_Collections.Look(ref savedReligionAbilities, "savedReligionAbilities", LookMode.Value);
+            Scribe_Collections.Look(ref savedIdeologyRoles, "savedIdeologyRoles", LookMode.Deep);
+            Scribe_Collections.Look(ref savedReligionRoles, "savedReligionRoles", LookMode.Deep);
+            Scribe_Collections.Look(ref savedIdeologyAbilities, "savedIdeologyAbilities", LookMode.Deep);
+            Scribe_Collections.Look(ref savedReligionAbilities, "savedReligionAbilities", LookMode.Deep);
             if (savedIdeologyRoles == null)
                 savedIdeologyRoles = new List<RoleSaveData>();
             if (savedReligionRoles == null)

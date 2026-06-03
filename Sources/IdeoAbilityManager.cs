@@ -118,9 +118,15 @@ namespace IdeoRework
         }
     }
 
-    public struct AbilitySaveData
+    public struct AbilitySaveData : IExposable
     {
         public int pawnId;
         public List<string> abilityDefNames;
+
+        public void ExposeData()
+        {
+            Scribe_Values.Look(ref pawnId, "pawnId");
+            Scribe_Collections.Look(ref abilityDefNames, "abilityDefNames", LookMode.Value);
+        }
     }
 }

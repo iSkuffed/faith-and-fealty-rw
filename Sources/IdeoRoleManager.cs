@@ -124,11 +124,19 @@ namespace IdeoRework
         }
     }
 
-    public struct RoleSaveData
+    public struct RoleSaveData : IExposable
     {
         public int pawnId;
         public string roleDefName;
         public int ideoId;
         public bool isLeader;
+
+        public void ExposeData()
+        {
+            Scribe_Values.Look(ref pawnId, "pawnId");
+            Scribe_Values.Look(ref roleDefName, "roleDefName");
+            Scribe_Values.Look(ref ideoId, "ideoId");
+            Scribe_Values.Look(ref isLeader, "isLeader");
+        }
     }
 }
