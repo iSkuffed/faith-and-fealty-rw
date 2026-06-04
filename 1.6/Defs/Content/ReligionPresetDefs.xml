@@ -27,53 +27,11 @@
               will NOT show deities in the UI, regardless of other settings.
             - Religion names are auto-generated using themed prefixes/suffixes based on the
               structure meme. See PresetReligions.cs for the name generation logic.
-
-        Example with deities (Structure_OriginChristian supports deityCount=1):
-            <IdeoRework.ReligionPresetDef>
-                <defName>Preset_HolyLight</defName>
-                <baseName>Church of the Holy Light</baseName>
-                <structureMeme>Structure_OriginChristian</structureMeme>
-                <normalMemes>
-                    <li>Proselytizer</li>
-                    <li>FleshPurity</li>
-                </normalMemes>
-                <leaderTitleMale>High Priest</leaderTitleMale>
-                <leaderTitleFemale>High Priestess</leaderTitleFemale>
-                <deityNameMakerOverride>NamerDeityChristian</deityNameMakerOverride>
-            </IdeoRework.ReligionPresetDef>
-
-        Example without deities (Structure_Animist has deityCount=0):
-            <IdeoRework.ReligionPresetDef>
-                <defName>Preset_OldWays</defName>
-                <baseName>The Old Ways</baseName>
-                <structureMeme>Structure_Animist</structureMeme>
-                <normalMemes>
-                    <li>AnimalPersonhood</li>
-                    <li>TreeConnection</li>
-                </normalMemes>
-                <leaderTitleMale>High Shaman</leaderTitleMale>
-                <leaderTitleFemale>High Shaman</leaderTitleFemale>
-            </IdeoRework.ReligionPresetDef>
-
-        Example with faction whitelist (only assigned to Empire):
-            <IdeoRework.ReligionPresetDef>
-                <defName>Preset_ImperialCult</defName>
-                <baseName>Imperial Cult</baseName>
-                <structureMeme>Structure_Archist</structureMeme>
-                <normalMemes>
-                    <li>Collectivist</li>
-                    <li>Loyalist</li>
-                    <li>HumanPrimacy</li>
-                </normalMemes>
-                <leaderTitleMale>Grand Inquisitor</leaderTitleMale>
-                <leaderTitleFemale>Grand Inquisitor</leaderTitleFemale>
-                <factionWhitelist>
-                    <li>Empire</li>
-                </factionWhitelist>
-            </IdeoRework.ReligionPresetDef>
     -->
 
-    <!-- Whitelisted presets MUST come first — selection algorithm returns first match -->
+    <!-- ==================== -->
+    <!-- EMPIRE — Imperial Cult -->
+    <!-- ==================== -->
     <IdeoRework.ReligionPresetDef>
         <defName>Preset_ImperialCult</defName>
         <baseName>Imperial Cult</baseName>
@@ -88,9 +46,35 @@
         <factionWhitelist>
             <li>Empire</li>
         </factionWhitelist>
-        <!-- Structure_Archist has deityCount=0, no deities will be generated -->
     </IdeoRework.ReligionPresetDef>
 
+    <!-- ==================== -->
+    <!-- TRIBAL — Paganism    -->
+    <!-- ==================== -->
+    <IdeoRework.ReligionPresetDef>
+        <defName>Preset_OldWays</defName>
+        <baseName>The Old Ways</baseName>
+        <structureMeme>Structure_Animist</structureMeme>
+        <normalMemes>
+            <li>AnimalPersonhood</li>
+            <li>TreeConnection</li>
+        </normalMemes>
+        <leaderTitleMale>High Shaman</leaderTitleMale>
+        <leaderTitleFemale>High Shaman</leaderTitleFemale>
+        <factionWhitelist>
+            <li>TribeCivil</li>
+            <li>TribeRough</li>
+            <li>TribeSavage</li>
+            <li>TribeRoughNeanderthal</li>
+            <li>TribeSavageImpid</li>
+            <li>TribeCannibal</li>
+            <li>NudistTribe</li>
+        </factionWhitelist>
+    </IdeoRework.ReligionPresetDef>
+
+    <!-- ==================== -->
+    <!-- OUTLANDER — Christian -->
+    <!-- ==================== -->
     <IdeoRework.ReligionPresetDef>
         <defName>Preset_HolyLight</defName>
         <baseName>Church of the Holy Light</baseName>
@@ -102,10 +86,18 @@
         <leaderTitleMale>High Priest</leaderTitleMale>
         <leaderTitleFemale>High Priestess</leaderTitleFemale>
         <deityNameMakerOverride>NamerDeityChristian</deityNameMakerOverride>
-        <!-- Structure_OriginChristian supports deities (deityCount=1) -->
-        <!-- deityNameMakerOverride uses Christian-style names for the deity -->
+        <factionWhitelist>
+            <li>OutlanderCivil</li>
+            <li>OutlanderRoughPig</li>
+            <li>Pirate</li>
+            <li>PirateYttakin</li>
+            <li>CannibalPirate</li>
+        </factionWhitelist>
     </IdeoRework.ReligionPresetDef>
 
+    <!-- ==================== -->
+    <!-- OUTLANDER — Islamic   -->
+    <!-- ==================== -->
     <IdeoRework.ReligionPresetDef>
         <defName>Preset_Crescent</defName>
         <baseName>Faith of the Crescent</baseName>
@@ -116,20 +108,10 @@
         </normalMemes>
         <leaderTitleMale>Imam</leaderTitleMale>
         <leaderTitleFemale>Imamah</leaderTitleFemale>
-        <!-- Structure_OriginIslamic supports deities (deityCount=1), uses default name generation -->
-    </IdeoRework.ReligionPresetDef>
-
-    <IdeoRework.ReligionPresetDef>
-        <defName>Preset_OldWays</defName>
-        <baseName>The Old Ways</baseName>
-        <structureMeme>Structure_Animist</structureMeme>
-        <normalMemes>
-            <li>AnimalPersonhood</li>
-            <li>TreeConnection</li>
-        </normalMemes>
-        <leaderTitleMale>High Shaman</leaderTitleMale>
-        <leaderTitleFemale>High Shaman</leaderTitleFemale>
-        <!-- Structure_Animist has deityCount=0, no deities will be generated -->
+        <factionWhitelist>
+            <li>OutlanderRough</li>
+            <li>PirateWaster</li>
+        </factionWhitelist>
     </IdeoRework.ReligionPresetDef>
 
     <!-- Example: Custom religion for a modded faction (uncomment and modify)
