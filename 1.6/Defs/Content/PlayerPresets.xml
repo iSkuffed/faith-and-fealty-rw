@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <IdeoRework.ReligionPresetDef>
+        <defName>PlayerPreset_Islam</defName>
+        <label>Islam</label>
+        <description>There is one God. Prophet Muhammad is his final messenger.</description>
+        <presetType>Religion</presetType>
+        <structureMeme>Structure_OriginIslamic</structureMeme>
+        <normalMemes>
+            <li>Proselytizer</li>
+            <li>HumanPrimacy</li>
+            <li>FleshPurity</li>
+        </normalMemes>
+    </IdeoRework.ReligionPresetDef>
+
+    <IdeoRework.ReligionPresetDef>
+        <defName>PlayerPreset_Christianity</defName>
+        <label>Christianity</label>
+        <description>God the Son became Man. Humans are made in His image.</description>
+        <presetType>Religion</presetType>
+        <structureMeme>Structure_OriginChristian</structureMeme>
+        <normalMemes>
+            <li>Proselytizer</li>
+            <li>HumanPrimacy</li>
+        </normalMemes>
+    </IdeoRework.ReligionPresetDef>
+
+    <IdeoRework.ReligionPresetDef>
+        <defName>PlayerPreset_Buddhist</defName>
+        <label>Buddhist</label>
+        <description>All life is suffering. End desire to achieve enlightenment.</description>
+        <presetType>Religion</presetType>
+        <structureMeme>Structure_OriginBuddhist</structureMeme>
+        <normalMemes>
+            <li>NaturePrimacy</li>
+            <li>FleshPurity</li>
+        </normalMemes>
+    </IdeoRework.ReligionPresetDef>
+
+    <IdeoRework.ReligionPresetDef>
+        <defName>PlayerPreset_Hindu</defName>
+        <label>Hindu</label>
+        <description>Honor the divine in all forms. Fulfill your dharma.</description>
+        <presetType>Religion</presetType>
+        <structureMeme>Structure_OriginHindu</structureMeme>
+        <normalMemes>
+            <li>HumanPrimacy</li>
+            <li>AnimalPersonhood</li>
+        </normalMemes>
+    </IdeoRework.ReligionPresetDef>
+
+    <!--
+        PLAYER PRESETS
+        ==============
+
+        These appear as selectable starting points in the Religion/Ideology wizard.
+        Selecting a preset pre-populates meme selections — all memes remain fully editable.
+        Presets are collapsed by default in the wizard UI.
+
+        If no presets are defined for a type (Religion/Ideology), the preset section
+        is hidden entirely in the wizard.
+
+        This file ships empty by default. Add your own presets below.
+
+        ─────────────────────────────────────────────────────────────────────────────
+
+        FIELDS:
+
+            defName           Unique identifier (required).
+            label             Display name shown in the preset card (required).
+            description       Tooltip description shown on hover (optional).
+            presetType        "Religion" or "Ideology" — which wizard step this appears in.
+            structureMeme     The foundation meme defName (required — exactly one).
+            normalMemes       Additional meme defNames (optional — can be empty).
+            iconPath          Texture path for the preset card icon (optional).
+                              If not set, the structure meme's icon is used.
+
+        ─────────────────────────────────────────────────────────────────────────────
+
+        AVAILABLE RELIGION STRUCTURE MEMES:
+
+            Structure_Animist           — Animism, nature spirits
+            Structure_TheistEmbodied    — Embodied theism, god walks among mortals
+            Structure_TheistAbstract    — Abstract theism, distant unknowable god
+            Structure_Archist           — Archotech worship, machine gods
+            Structure_OriginChristian   — Christian-origin theology
+            Structure_OriginIslamic     — Islamic-origin theology
+            Structure_OriginHindu       — Hindu-origin theology
+            Structure_OriginBuddhist    — Buddhist-origin theology
+
+        AVAILABLE RELIGION NORMAL MEMES:
+
+            Proselytizer, Blindsight, HighLife, PainIsVirtue, Cannibal, Nudism,
+            TreeConnection, Darkness, AnimalPersonhood, Tunneler,
+            MaleSupremacy, FemaleSupremacy, HumanPrimacy, NaturePrimacy, FleshPurity
+
+        AVAILABLE IDEOLOGY STRUCTURE MEMES:
+
+            Structure_Ideological       — Rationalist social philosophy
+
+        AVAILABLE IDEOLOGY NORMAL MEMES:
+
+            Transhumanist, Supremacist, Loyalist, Guilty,
+            Individualist, Collectivist, Rancher, Raider
+
+        ─────────────────────────────────────────────────────────────────────────────
+
+        EXAMPLES (uncomment to use):
+
+        Religion preset:
+        <IdeoRework.ReligionPresetDef>
+            <defName>PlayerPreset_DruidCircle</defName>
+            <label>Druid Circle</label>
+            <description>A nature-focused spiritual order that venerates the old groves.</description>
+            <presetType>Religion</presetType>
+            <structureMeme>Structure_Animist</structureMeme>
+            <normalMemes>
+                <li>NaturePrimacy</li>
+                <li>TreeConnection</li>
+            </normalMemes>
+        </IdeoRework.ReligionPresetDef>
+
+        Ideology preset:
+        <IdeoRework.ReligionPresetDef>
+            <defName>PlayerPreset_MeritocraticUnion</defName>
+            <label>Meritocratic Union</label>
+            <description>A society that values achievement and individual excellence above all.</description>
+            <presetType>Ideology</presetType>
+            <structureMeme>Structure_Ideological</structureMeme>
+            <normalMemes>
+                <li>Individualist</li>
+            </normalMemes>
+        </IdeoRework.ReligionPresetDef>
+
+        Preset with custom icon:
+        <IdeoRework.ReligionPresetDef>
+            <defName>PlayerPreset_TechCult</defName>
+            <label>Techno-Cult</label>
+            <description>Technology is sacred. The flesh is weak.</description>
+            <presetType>Religion</presetType>
+            <structureMeme>Structure_Archist</structureMeme>
+            <normalMemes>
+                <li>Transhumanist</li>
+            </normalMemes>
+            <iconPath>UI/Icons/Meme/Transhumanist</iconPath>
+        </IdeoRework.ReligionPresetDef>
+    -->
+</Defs>

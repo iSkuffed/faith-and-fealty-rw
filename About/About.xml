@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>Ideology &amp; Religion Rework</name>
+  <name>Faith &amp; Fealty</name>
   <author>skuffed</author>
   <packageId>skuffed.ideorework</packageId>
   <modVersion>1.0.0</modVersion>
   <supportedVersions>
-    <li>1.5</li>
     <li>1.6</li>
   </supportedVersions>
   <modDependencies>
     <li>
       <packageId>brrainz.harmony</packageId>
       <displayName>Harmony</displayName>
-      <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
     </li>
   </modDependencies>
   <loadAfter>
     <li>brrainz.harmony</li>
+    <li>VanillaExpanded.vmemese</li>
   </loadAfter>
-  <description>Separates Ideologies from Religions in the Ideology DLC. When creating a new belief system, you now walk through a two-step wizard: first design your Religion (supernatural beliefs, deities, spiritual memes), then design your Ideology (social, political, and economic values). Both combine into a single integrated belief system.</description>
+  <description>Splits the Ideology DLC into two independent systems: Faith (supernatural beliefs, deities) and Fealty (social values, governance). Custom 4-step wizard, dual role/ability tracking, certainty, cognitive dissonance, and a data-driven preset system. Framework-friendly, Check the Mods directory to customize your experience! It's easy!</description>
 </ModMetaData>

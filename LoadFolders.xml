@@ -2,5 +2,6 @@
   <v1.6>
     <li>/</li>
     <li>1.6</li>
+    <li IfModActive="VanillaExpanded.vmemese">1.6/Mods/VanillaIdeologyExpanded</li>
   </v1.6>
 </loadFolders>

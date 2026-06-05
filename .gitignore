@@ -5,24 +5,12 @@ Sources/bin/
 *.suo
 *.cache
 build.sh
-SessionHandoff.md
-
-# Debug files (user-owned, not part of mod)
-DEBUG.md
-DESIGN.md
-AGENTS.md
-
-# OS files
 .DS_Store
 Thumbs.db
-
-# IDE files
 .vs/
 .vscode/
 *.swp
 *.swo
-
-# NuGet
 *.nupkg
 *.snupkg
 .nuget/

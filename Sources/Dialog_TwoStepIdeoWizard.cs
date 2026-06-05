@@ -28,6 +28,10 @@ namespace IdeoRework
         private Ideo ideologyIdeo;
         private Vector2 scrollPosition;
         private float scrollViewHeight;
+        private bool religionPresetsExpanded;
+        private bool ideologyPresetsExpanded;
+        private ReligionPresetDef selectedReligionPreset;
+        private ReligionPresetDef selectedIdeologyPreset;
 
         private const float TitleHeight = 50f;
         private const float SubtitleHeight = 25f;
@@ -100,9 +104,139 @@ namespace IdeoRework
             Rect viewRect = new Rect(0f, 0f, outRect.width - 20f, scrollViewHeight);
             Widgets.BeginScrollView(outRect, ref scrollPosition, viewRect);
             float innerY = 0f;
+
+            // Draw collapsible preset section
+            DrawPresetSection(viewRect.width, ref innerY, isReligion, selected);
+
             DrawMemeGrid(viewRect.width, ref innerY, available, selected);
             scrollViewHeight = innerY;
             Widgets.EndScrollView();
+        }
+
+        private void DrawPresetSection(float width, ref float curY, bool isReligion, List<MemeDef> selected)
+        {
+            var presets = PresetReligions.GetPlayerPresets(isReligion ? PresetType.Religion : PresetType.Ideology);
+            if (presets == null || presets.Count == 0)
+                return;
+
+            ref bool expanded = ref (isReligion ? ref religionPresetsExpanded : ref ideologyPresetsExpanded);
+            var selectedPreset = isReligion ? selectedReligionPreset : selectedIdeologyPreset;
+
+            // Collapsible header
+            Rect headerRect = new Rect(0f, curY, width, 30f);
+            string label = $"Presets ({presets.Count} available)";
+            if (selectedPreset != null)
+                label += $"  —  Selected: {selectedPreset.label}";
+
+            bool didExpand = expanded;
+            Widgets.DrawBoxSolid(headerRect, new Color(0.15f, 0.15f, 0.15f));
+            Rect arrowRect = new Rect(headerRect.x + 4f, headerRect.y + 4f, 22f, 22f);
+            string arrow = expanded ? "▼" : "▶";
+            Text.Font = GameFont.Small;
+            GUI.color = new Color(0.7f, 0.7f, 0.7f);
+            Widgets.Label(arrowRect, arrow);
+            GUI.color = Color.white;
+            Text.Font = GameFont.Small;
+            Widgets.Label(new Rect(headerRect.x + 28f, headerRect.y + 4f, width - 28f, 22f), label);
+
+            if (Widgets.ButtonInvisible(headerRect))
+                expanded = !expanded;
+
+            curY += 34f;
+
+            // Expanded content: grid of preset cards
+            if (expanded)
+            {
+                float cardW = 140f;
+                float cardH = 90f;
+                float cardGap = 8f;
+                float cx = 0f;
+
+                foreach (var preset in presets)
+                {
+                    Rect cardRect = new Rect(cx, curY, cardW, cardH);
+                    bool isThisSelected = selectedPreset == preset;
+
+                    // Card background
+                    Widgets.DrawBoxSolid(cardRect, isThisSelected
+                        ? new Color(0.2f, 0.35f, 0.2f)
+                        : new Color(0.12f, 0.12f, 0.12f));
+                    GUI.color = isThisSelected
+                        ? new Color(0.4f, 0.8f, 0.4f)
+                        : new Color(0.4f, 0.4f, 0.4f);
+                    Widgets.DrawBox(cardRect, 1, null);
+                    GUI.color = Color.white;
+
+                    // Structure meme icon (top-left)
+                    var structureMeme = DefDatabase<MemeDef>.GetNamedSilentFail(preset.structureMeme);
+                    if (structureMeme != null)
+                    {
+                        Rect iconRect = new Rect(cardRect.x + 6f, cardRect.y + 6f, 28f, 28f);
+                        GUI.DrawTexture(iconRect, structureMeme.Icon);
+                    }
+
+                    // Label
+                    Text.Font = GameFont.Small;
+                    Widgets.Label(new Rect(cardRect.x + 38f, cardRect.y + 6f, cardW - 44f, 20f), preset.label);
+
+                    // Description (truncated)
+                    if (!preset.description.NullOrEmpty())
+                    {
+                        Text.Font = GameFont.Tiny;
+                        GUI.color = new Color(0.7f, 0.7f, 0.7f);
+                        string desc = preset.description.Length > 80
+                            ? preset.description.Substring(0, 77) + "..."
+                            : preset.description;
+                        Widgets.Label(new Rect(cardRect.x + 8f, cardRect.y + 36f, cardW - 16f, 48f), desc);
+                        GUI.color = Color.white;
+                    }
+
+                    Text.Font = GameFont.Small;
+
+                    if (Widgets.ButtonInvisible(cardRect))
+                    {
+                        if (isThisSelected)
+                        {
+                            // Deselect: clear the preset and meme list
+                            selected.Clear();
+                            if (isReligion) selectedReligionPreset = null;
+                            else selectedIdeologyPreset = null;
+                        }
+                        else
+                        {
+                            // Select: populate meme list from preset
+                            selected.Clear();
+                            if (!preset.structureMeme.NullOrEmpty())
+                            {
+                                var structureDef = DefDatabase<MemeDef>.GetNamedSilentFail(preset.structureMeme);
+                                if (structureDef != null) selected.Add(structureDef);
+                            }
+                            if (preset.normalMemes != null)
+                            {
+                                foreach (var memeName in preset.normalMemes)
+                                {
+                                    var memeDef = DefDatabase<MemeDef>.GetNamedSilentFail(memeName);
+                                    if (memeDef != null) selected.Add(memeDef);
+                                }
+                            }
+                            if (isReligion) selectedReligionPreset = preset;
+                            else selectedIdeologyPreset = preset;
+                        }
+                    }
+
+                    cx += cardW + cardGap;
+                    if (cx + cardW > width)
+                    {
+                        cx = 0f;
+                        curY += cardH + cardGap;
+                    }
+                }
+
+                if (cx + cardW > width)
+                    curY += cardH + cardGap;
+
+                curY += cardH + cardGap + 4f;
+            }
         }
 
         private void DrawMemeGrid(float width, ref float curY, List<MemeDef> available, List<MemeDef> selected)

@@ -26,14 +26,34 @@ namespace IdeoRework
             PlayerReligionIdeo = null;
         }
 
+        // ── Available presets for wizard UI ─────────────────────────────────
+
+        public static List<ReligionPresetDef> GetAvailablePresets(PresetType type)
+        {
+            return DefDatabase<ReligionPresetDef>.AllDefsListForReading
+                .Where(p => p.presetType == type)
+                .ToList();
+        }
+
+        public static List<ReligionPresetDef> GetPlayerPresets(PresetType type)
+        {
+            return DefDatabase<ReligionPresetDef>.AllDefsListForReading
+                .Where(p => p.presetType == type
+                    && (p.factionWhitelist == null || p.factionWhitelist.Count == 0)
+                    && (p.factionBlacklist == null || p.factionBlacklist.Count == 0))
+                .ToList();
+        }
+
         // ── Faction → Religion mapping (from XML) ─────────────────────────
 
         public static ReligionPresetDef GetReligionForFaction(FactionDef def)
         {
             if (def == null) return null;
 
-            // Get all presets from XML
-            var presets = DefDatabase<ReligionPresetDef>.AllDefsListForReading;
+            // Get all religion presets from XML (filter out ideology presets)
+            var presets = DefDatabase<ReligionPresetDef>.AllDefsListForReading
+                .Where(p => p.presetType == PresetType.Religion)
+                .ToList();
             if (presets == null || presets.Count == 0) return null;
 
             // Find matching preset based on faction whitelist/blacklist
@@ -187,6 +207,11 @@ namespace IdeoRework
 
                 // Override memes with our preset memes
                 ideo.memes = new List<MemeDef>(memes);
+                // Set name: use baseName if provided, otherwise generate randomly
+                if (!string.IsNullOrWhiteSpace(preset.baseName))
+                ideo.name = preset.baseName;
+                else
+                ideo.name = GenerateReligionName(preset);
 
                 // Apply deity name maker override to structure meme (if preset specifies one)
                 // This controls the grammar pack used for deity name generation
@@ -207,8 +232,9 @@ namespace IdeoRework
                     try { deityFoundation.GenerateDeities(); } catch { }
                 }
 
-                // Generate a randomized name
-                ideo.name = GenerateReligionName(preset);
+                // Generate a randomized name (only if no baseName was provided)
+                if (string.IsNullOrWhiteSpace(preset.baseName))
+                    ideo.name = GenerateReligionName(preset);
 
                 // Set leader titles if specified
                 if (!preset.leaderTitleMale.NullOrEmpty())

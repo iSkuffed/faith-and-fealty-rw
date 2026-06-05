@@ -87,6 +87,10 @@ namespace IdeoRework
                 ReligionPresetDef matchedPreset = null;
                 foreach (var preset in presets)
                 {
+                    // Skip player presets (no whitelist or blacklist = wizard preset)
+                    if ((preset.factionWhitelist == null || preset.factionWhitelist.Count == 0)
+                        && (preset.factionBlacklist == null || preset.factionBlacklist.Count == 0))
+                        continue;
                     if (preset.factionWhitelist != null && preset.factionWhitelist.Count > 0
                         && !preset.factionWhitelist.Contains(faction.def.defName))
                         continue;

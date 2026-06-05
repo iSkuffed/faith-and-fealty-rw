@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <!--
+        VANILLA IDEOLOGY EXPANDED — MEMES AND STRUCTURES
+        Compatibility: ReligionCategoryMemeDef entries for VME memes.
+        This file is ONLY loaded when VanillaExpanded.VMemesE is active (see loadFolders.xml).
+    -->
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- RELIGION MEMES (23) — supernatural/spiritual -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- Structure memes -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Serketist</defName>
+        <targetDefName>VME_Structure_Serketist</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Esotericism</defName>
+        <targetDefName>VME_Structure_Esotericism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Bacchanalianism</defName>
+        <targetDefName>VME_Structure_Bacchanalianism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_ChthonianCult</defName>
+        <targetDefName>VME_Structure_ChthonianCult</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Eschatologism</defName>
+        <targetDefName>VME_Structure_Eschatologism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_CultOfPersonality</defName>
+        <targetDefName>VME_Structure_CultOfPersonality</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Pantheism</defName>
+        <targetDefName>VME_Structure_Pantheism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Omnism</defName>
+        <targetDefName>VME_Structure_Omnism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Agnosticism</defName>
+        <targetDefName>VME_Structure_Agnosticism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_SecularSpirituality</defName>
+        <targetDefName>VME_Structure_SecularSpirituality</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Shintaoism</defName>
+        <targetDefName>VME_Structure_Shintaoism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <!-- Normal memes -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_ViolentConversion</defName>
+        <targetDefName>VME_ViolentConversion</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Astrology</defName>
+        <targetDefName>VME_Astrology</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_GodEmperor</defName>
+        <targetDefName>VME_GodEmperor</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Fleshcrafters</defName>
+        <targetDefName>VME_Fleshcrafters</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_HolyDiseases</defName>
+        <targetDefName>VME_HolyDiseases</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_FireWorship</defName>
+        <targetDefName>VME_FireWorship</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Bushido</defName>
+        <targetDefName>VME_Bushido</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Light</defName>
+        <targetDefName>VME_Light</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_ExaltedPriesthood</defName>
+        <targetDefName>VME_ExaltedPriesthood</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_BloodCourt</defName>
+        <targetDefName>VME_BloodCourt</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Elders</defName>
+        <targetDefName>VME_Elders</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Angler</defName>
+        <targetDefName>VME_Angler</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- IDEOLOGY MEMES (21) — social/political -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- Structure memes -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Authoritarianism</defName>
+        <targetDefName>VME_Structure_Authoritarianism</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Structure_Corporate</defName>
+        <targetDefName>VME_Structure_Corporate</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <!-- Normal memes -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_HardcoreIndustrialism</defName>
+        <targetDefName>VME_HardcoreIndustrialism</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Gestalt</defName>
+        <targetDefName>VME_Gestalt</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_CraftCulture</defName>
+        <targetDefName>VME_CraftCulture</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Progressive</defName>
+        <targetDefName>VME_Progressive</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Aristocratic</defName>
+        <targetDefName>VME_Aristocratic</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Republic</defName>
+        <targetDefName>VME_Republic</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Scrapper</defName>
+        <targetDefName>VME_Scrapper</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Trader</defName>
+        <targetDefName>VME_Trader</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Vegan</defName>
+        <targetDefName>VME_Vegan</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Egalitarian</defName>
+        <targetDefName>VME_Egalitarian</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Pacifist</defName>
+        <targetDefName>VME_Pacifist</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Nomad</defName>
+        <targetDefName>VME_Nomad</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_CityBuilders</defName>
+        <targetDefName>VME_CityBuilders</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_MechanoidSupremacy</defName>
+        <targetDefName>VME_MechanoidSupremacy</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_InsectoidSupremacy</defName>
+        <targetDefName>VME_InsectoidSupremacy</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_PartyLife</defName>
+        <targetDefName>VME_PartyLife</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Anonymity</defName>
+        <targetDefName>VME_Anonymity</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Emancipation</defName>
+        <targetDefName>VME_Emancipation</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Nationalist</defName>
+        <targetDefName>VME_Nationalist</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_VME_Healthcare</defName>
+        <targetDefName>VME_Healthcare</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+</Defs>

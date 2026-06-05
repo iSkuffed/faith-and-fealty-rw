@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
     <!--
-        RELIGION CATEGORY MEME SORTING DEFS
+        RELIGION & IDEOLOGY CATEGORY MEME SORTING DEFS
         =====================================
         
         These defs categorize vanilla memes as Religion, Ideology, or Both.
@@ -22,7 +22,7 @@
         HOW TO MAKE A PATCH (for mod authors)
         ======================================
         
-        If your mod adds custom memes and you want them to work with Ideology & Religion Rework,
+        If your mod adds custom memes and you want them to work with Faith & Fealty,
         create an XML file in your mod's Defs/ directory with entries like this:
         
         <Defs>
@@ -116,26 +116,8 @@
     </IdeoRework.ReligionCategoryMemeDef>
 
     <IdeoRework.ReligionCategoryMemeDef>
-        <defName>CatMeme_HighLife</defName>
-        <targetDefName>HighLife</targetDefName>
-        <category>Religion</category>
-    </IdeoRework.ReligionCategoryMemeDef>
-
-    <IdeoRework.ReligionCategoryMemeDef>
         <defName>CatMeme_PainIsVirtue</defName>
         <targetDefName>PainIsVirtue</targetDefName>
-        <category>Religion</category>
-    </IdeoRework.ReligionCategoryMemeDef>
-
-    <IdeoRework.ReligionCategoryMemeDef>
-        <defName>CatMeme_Cannibal</defName>
-        <targetDefName>Cannibal</targetDefName>
-        <category>Religion</category>
-    </IdeoRework.ReligionCategoryMemeDef>
-
-    <IdeoRework.ReligionCategoryMemeDef>
-        <defName>CatMeme_Nudism</defName>
-        <targetDefName>Nudism</targetDefName>
         <category>Religion</category>
     </IdeoRework.ReligionCategoryMemeDef>
 
@@ -154,12 +136,6 @@
     <IdeoRework.ReligionCategoryMemeDef>
         <defName>CatMeme_AnimalPersonhood</defName>
         <targetDefName>AnimalPersonhood</targetDefName>
-        <category>Religion</category>
-    </IdeoRework.ReligionCategoryMemeDef>
-
-    <IdeoRework.ReligionCategoryMemeDef>
-        <defName>CatMeme_Tunneler</defName>
-        <targetDefName>Tunneler</targetDefName>
         <category>Religion</category>
     </IdeoRework.ReligionCategoryMemeDef>
 
@@ -193,6 +169,24 @@
         <category>Religion</category>
     </IdeoRework.ReligionCategoryMemeDef>
 
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Ritualist</defName>
+        <targetDefName>Ritualist</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Bloodfeeding</defName>
+        <targetDefName>Bloodfeeding</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Inhuman</defName>
+        <targetDefName>Inhuman</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
     <!-- ═══════════════════════════════════════════════════ -->
     <!-- IDEOLOGY MEMES (9) — social/political worldviews -->
     <!-- ═══════════════════════════════════════════════════ -->
@@ -208,6 +202,18 @@
     <IdeoRework.ReligionCategoryMemeDef>
         <defName>CatMeme_Transhumanist</defName>
         <targetDefName>Transhumanist</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Nudism</defName>
+        <targetDefName>Nudism</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Tunneler</defName>
+        <targetDefName>Tunneler</targetDefName>
         <category>Ideology</category>
     </IdeoRework.ReligionCategoryMemeDef>
 
@@ -252,4 +258,17 @@
         <targetDefName>Raider</targetDefName>
         <category>Ideology</category>
     </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_Cannibal</defName>
+        <targetDefName>Cannibal</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_HighLife</defName>
+        <targetDefName>HighLife</targetDefName>
+        <category>Ideology</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
 </Defs>
