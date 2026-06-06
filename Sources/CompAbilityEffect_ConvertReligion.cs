@@ -27,7 +27,7 @@ namespace IdeoRework
             var initiatorReligion = parent.pawn.GetReligionIdeo();
             var recipientReligion = recipient.GetReligionIdeo();
 
-            // Deny if target shares religion with initiator
+            // Deny if target shares religion with initiator. Matthew 6:9-15
             if (initiatorReligion != null && initiatorReligion == recipientReligion)
                 return false;
 

@@ -19,7 +19,7 @@ namespace IdeoRework
     {
         None,
         Engaged,   // One system has precept, other neutral — only triggers if action engaged
-        Opposing   // One rewards, other forbids — immediate dissonance
+        Opposing   // One rewards, other forbids — immediate dissonance. Matthew 23:13
     }
 
     public struct ConflictEntry

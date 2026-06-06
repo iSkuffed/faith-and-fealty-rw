@@ -2,7 +2,7 @@ using HarmonyLib;
 using RimWorld;
 using UnityEngine;
 using Verse;
-
+// Psalms 23:4
 namespace IdeoRework
 {
     public class CompProperties_ReassureReligion : CompProperties_AbilityEffect

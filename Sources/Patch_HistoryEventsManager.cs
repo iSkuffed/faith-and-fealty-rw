@@ -13,6 +13,9 @@ namespace IdeoRework
         {
             try
             {
+                if (IdeoReworkModController.Settings != null && !IdeoReworkModController.Settings.enableCognitiveDissonance)
+                    return;
+
                 // Log engagement for cognitive dissonance tracking
                 CognitiveDissonanceTracker.LogEngagement(historyEvent.def);
             }

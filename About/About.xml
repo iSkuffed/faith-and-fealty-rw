@@ -16,6 +16,7 @@
   <loadAfter>
     <li>brrainz.harmony</li>
     <li>VanillaExpanded.vmemese</li>
+    <li>Sarg.AlphaMemes</li>
   </loadAfter>
   <description>Splits the Ideology DLC into two independent systems: Faith (supernatural beliefs, deities) and Fealty (social values, governance). Custom 4-step wizard, dual role/ability tracking, certainty, cognitive dissonance, and a data-driven preset system. Framework-friendly, Check the Mods directory to customize your experience! It's easy!</description>
 </ModMetaData>

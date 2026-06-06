@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+    <!--
+        ALPHA MEMES
+        Compatibility: ReligionCategoryMemeDef entries for Alpha Memes memes.
+        This file is ONLY loaded when Sarg.AlphaMemes is active (see loadFolders.xml).
+    -->
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- RELIGION MEMES (9) — spiritual/religious-themed    -->
+    <!-- ═══════════════════════════════════════════════════ -->
+
+    <!-- Structure memes (religious origins / spiritual foundations) -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_Structure_Jewish</defName>
+        <targetDefName>AM_Structure_Jewish</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_Structure_Jainism</defName>
+        <targetDefName>AM_Structure_Jainism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_Structure_Sikhism</defName>
+        <targetDefName>AM_Structure_Sikhism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_Structure_Kemetism</defName>
+        <targetDefName>AM_Structure_Kemetism</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_Structure_Neolithic</defName>
+        <targetDefName>AM_Structure_Neolithic</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <!-- Normal memes (spiritual/religious beliefs) -->
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_Monastic</defName>
+        <targetDefName>AM_Monastic</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_WaterPrimacy</defName>
+        <targetDefName>AM_WaterPrimacy</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_Iconoclast</defName>
+        <targetDefName>AM_Iconoclast</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+
+    <IdeoRework.ReligionCategoryMemeDef>
+        <defName>CatMeme_AM_GauranlenSupremacy</defName>
+        <targetDefName>AM_GauranlenSupremacy</targetDefName>
+        <category>Religion</category>
+    </IdeoRework.ReligionCategoryMemeDef>
+</Defs>

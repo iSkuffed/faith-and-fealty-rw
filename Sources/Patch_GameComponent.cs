@@ -14,6 +14,9 @@ namespace IdeoRework
         {
             try
             {
+                if (IdeoReworkModController.Settings != null && !IdeoReworkModController.Settings.enableCognitiveDissonance)
+                    return;
+
                 tickCounter++;
                 if (tickCounter < 250) return;  // Every 250 ticks (~4 seconds)
                 tickCounter = 0;

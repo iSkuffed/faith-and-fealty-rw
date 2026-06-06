@@ -124,6 +124,9 @@ namespace IdeoRework
             // Restore role assignments
             RestoreRoles(savedIdeologyRoles, isReligion: false);
             RestoreRoles(savedReligionRoles, isReligion: true);
+
+            // Fix any pawns whose primary ideo or religion tracking was lost on load
+            HardOverride.VerifyAndFixAllPlayerPawns();
         }
 
         private void RestoreRoles(List<RoleSaveData> roles, bool isReligion)
