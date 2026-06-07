@@ -25,8 +25,6 @@
             - Whitelisted presets MUST come first — selection returns the first match.
             - Structure memes with deityCount=0 (e.g., Structure_Animist, Structure_Archist)
               will NOT show deities in the UI, regardless of other settings.
-            - Religion names are auto-generated using themed prefixes/suffixes based on the
-              structure meme. See PresetReligions.cs for the name generation logic.
     -->
 
     <!-- ==================== -->
