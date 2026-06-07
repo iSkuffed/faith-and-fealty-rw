@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -7,6 +8,13 @@ namespace IdeoRework
 {
     public static class HardOverride
     {
+        // Tracks which pawns have already been processed by FixVisitorPawn to
+        // ensure we never re-process the same pawn (e.g. on re-generation or
+        // redress). This prevents overwriting a pawn that was intentionally
+        // converted away from their faction's religion.
+        private static readonly HashSet<int> _processedPawns = new HashSet<int>();
+
+        public static void ClearProcessedPawns() => _processedPawns.Clear();
         public static void AssignToAllPlayerPawns(Ideo ideology, Ideo religion)
         {
             try
@@ -108,6 +116,56 @@ namespace IdeoRework
             catch (Exception ex)
             {
                 Log.Warning($"[IdeoRework] VerifyAndFixAllPlayerPawns failed: {ex}");
+            }
+        }
+
+        // Post-generation check for visitor/NPC pawns. Runs once per new pawn
+        // generation (e.g. when caravans arrive). Detects two issues:
+        //   1. pawn.Ideo is the religion instead of the faction's primary ideo
+        //   2. pawn is missing religion tracking (GetReligionIdeo returns null)
+        // Uses _processedPawns to never run on the same pawn twice.
+        public static void FixVisitorPawn(Pawn pawn)
+        {
+            try
+            {
+                if (pawn == null || pawn.ideo == null) return;
+
+                // Skip player pawns — those are handled by VerifyAndFixAllPlayerPawns
+                if (pawn.IsPlayerControlled) return;
+                if (pawn.Faction != null && pawn.Faction.IsPlayer) return;
+
+                // Skip hidden factions (Ancients, mechanoids, insects, etc.)
+                var faction = pawn.Faction;
+                if (faction == null || faction.ideos == null) return;
+                if (faction.def.hidden) return;
+
+                // Only act if this faction has a religion assigned
+                var religion = FactionIdeoHelper.FindReligionIdeo(faction.ideos);
+                if (religion == null) return;
+
+                // Skip if we already processed this pawn (never re-process)
+                if (!_processedPawns.Add(pawn.thingIDNumber)) return;
+
+                // Fix mirrored entry: pawn.Ideo should be the faction's primary,
+                // not the religion. The religion is tracked separately via SetReligionIdeo.
+                if (pawn.Ideo == religion)
+                {
+                    var correctIdeo = faction.ideos.PrimaryIdeo;
+                    if (correctIdeo != null && correctIdeo != religion)
+                        pawn.ideo.SetIdeo(correctIdeo);
+                }
+
+                // Fix missing entry: pawn should have religion tracking assigned
+                if (pawn.GetReligionIdeo() == null)
+                {
+                    pawn.SetReligionIdeo(religion);
+                    if (pawn.GetReligionCertainty() <= 0f)
+                        pawn.SetReligionCertainty(Rand.Range(0.75f, 1.0f));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"[IdeoRework] FixVisitorPawn failed: {ex}");
             }
         }
     }

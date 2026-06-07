@@ -80,6 +80,46 @@ namespace IdeoRework
         }
     }
 
+    // ── Filter religion ideos from pawn generation pool ─────────────────────
+    // Vanilla's GetRandomIdeoForNewPawn picks from AllIdeos with weighted random
+    // (primary gets weight 4, each minor gets weight 1). Since the religion is in
+    // the faction's minor ideos, it can be picked as a pawn's primary ideo ~20%
+    // of the time. This prefix filters it out so no pawn ever gets the religion
+    // as their primary — the religion is always assigned separately via
+    // SetReligionIdeo() in HardOverride.
+
+    [HarmonyPatch(typeof(FactionIdeosTracker))]
+    [HarmonyPatch("GetRandomIdeoForNewPawn")]
+    public static class Patch_FactionIdeosTracker_GetRandomIdeoForNewPawn
+    {
+        static bool Prefix(FactionIdeosTracker __instance, ref Ideo __result)
+        {
+            try
+            {
+                // Build a list of non-religion ideos from this faction's AllIdeos
+                var validIdeos = new List<Ideo>();
+                foreach (var ideo in __instance.AllIdeos)
+                {
+                    if (!PresetReligions.CreatedReligionIdeos.Contains(ideo))
+                        validIdeos.Add(ideo);
+                }
+
+                // If all ideos are religions (shouldn't happen), let original run
+                if (validIdeos.Count == 0)
+                    return true;
+
+                // Pick with same vanilla weighting: primary gets 4, minor gets 1
+                __result = validIdeos.RandomElementByWeightWithFallback(
+                    (Ideo x) => (__instance.PrimaryIdeo == x) ? 4f : 1f);
+                return false;
+            }
+            catch
+            {
+                return true;
+            }
+        }
+    }
+
     // ── Register religion ideos with IdeoManager ──────────────────────────
 
     [HarmonyPatch(typeof(FactionIdeosTracker))]
