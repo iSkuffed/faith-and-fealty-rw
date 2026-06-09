@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <WorkGiverDef>
+    <defName>ConvertReligionPrisoner</defName>
+    <label>convert prisoners' religion</label>
+    <giverClass>IdeoRework.WorkGiver_Warden_ConvertReligion</giverClass>
+    <workType>Warden</workType>
+    <verb>convert</verb>
+    <gerund>converting religion</gerund>
+    <priorityInType>73</priorityInType>
+    <requiredCapacities>
+      <li>Talking</li>
+    </requiredCapacities>
+  </WorkGiverDef>
+</Defs>

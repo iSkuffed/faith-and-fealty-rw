@@ -1,3 +1,4 @@
+using System.Linq;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -10,8 +11,23 @@ namespace IdeoRework
     {
         static void Postfix(Pawn __instance, Faction newFaction)
         {
-            if (newFaction != null && newFaction.IsPlayer)
-                ReligionBelieverTracker.OnPawnJoinedColony(__instance);
+            if (newFaction == null || !newFaction.IsPlayer) return;
+
+            if (__instance.GetReligionIdeo() == null)
+            {
+                var playerReligion = PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive_FreeColonists
+                    .Where(p => p != __instance && p.GetReligionIdeo() != null)
+                    .Select(p => p.GetReligionIdeo())
+                    .FirstOrDefault();
+
+                if (playerReligion != null)
+                {
+                    __instance.SetReligionIdeo(playerReligion);
+                    __instance.SetReligionCertainty(Rand.Range(0.75f, 1.0f));
+                }
+            }
+
+            ReligionBelieverTracker.OnPawnJoinedColony(__instance);
         }
     }
 }

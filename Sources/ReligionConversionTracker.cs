@@ -6,17 +6,18 @@ namespace IdeoRework
 {
     public static class ReligionConversionTracker
     {
-        public static void CheckForConversion(Pawn pawn, float newCertainty)
+        public static void CheckForConversion(Pawn pawn, float newCertainty, Ideo targetReligion = null)
         {
             if (newCertainty > 0f) return;
             if (pawn == null || pawn.Dead) return;
 
             var oldReligion = pawn.GetReligionIdeo();
-            Ideo targetReligion = FindAlternativeReligion(pawn);
 
             if (targetReligion == null)
             {
-                targetReligion = PresetReligions.GetOrCreateAgnosticReligion();
+                targetReligion = FindAlternativeReligion(pawn);
+                if (targetReligion == null)
+                    targetReligion = PresetReligions.GetOrCreateAgnosticReligion();
             }
 
             if (targetReligion == null || targetReligion == oldReligion) return;
