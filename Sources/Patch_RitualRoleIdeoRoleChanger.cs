@@ -24,4 +24,23 @@ namespace IdeoRework
             }
         }
     }
+
+    [HarmonyPatch(typeof(RitualRoleAssignments))]
+    [HarmonyPatch("UpdateRoleChangeTargetRole")]
+    public static class Patch_RitualRoleAssignments_UpdateRoleChangeTargetRole
+    {
+        static bool Prefix(RitualRoleAssignments __instance, Pawn pawn)
+        {
+            if (pawn == null) return true;
+
+            var religionRole = IdeoRoleManager.GetRole(pawn, isReligion: true);
+            if (religionRole != null)
+            {
+                __instance.SetRoleChangeSelection(null);
+                return false;
+            }
+
+            return true;
+        }
+    }
 }

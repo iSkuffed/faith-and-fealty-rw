@@ -8,23 +8,41 @@ namespace IdeoRework
     [HarmonyPatch("GameComponentTick")]
     public static class Patch_GameComponentUtility_GameComponentTick
     {
-        private static int tickCounter = 0;
+        private static int lastTick = -1;
+        private const int TickInterval = 250;
 
         static void Postfix()
         {
             try
             {
-                if (IdeoReworkModController.Settings != null && !IdeoReworkModController.Settings.enableCognitiveDissonance)
+                if (Find.World == null || Current.ProgramState != ProgramState.Playing)
                     return;
 
-                tickCounter++;
-                if (tickCounter < 250) return;  // Every 250 ticks (~4 seconds)
-                tickCounter = 0;
+                var settings = IdeoReworkModController.Settings;
+                if (settings == null) return;
 
-                // Skip during world gen
-                if (Find.World == null || Current.ProgramState != ProgramState.Playing) return;
+                int currentTick = Find.TickManager.TicksGame;
 
-                CognitiveDissonanceTracker.Tick(250);
+                if (lastTick < 0)
+                {
+                    lastTick = currentTick;
+                    return;
+                }
+
+                int elapsed = currentTick - lastTick;
+                if (elapsed < TickInterval) return;
+
+                lastTick = currentTick;
+
+                switch (settings.cognitiveDissonanceMode)
+                {
+                    case CognitiveDissonanceMode.Legacy:
+                        CognitiveDissonanceTracker.Tick(elapsed);
+                        break;
+                    case CognitiveDissonanceMode.Experimental:
+                        CognitiveDissonanceExperimental.Tick(elapsed);
+                        break;
+                }
             }
             catch (Exception ex)
             {

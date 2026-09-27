@@ -28,6 +28,11 @@ namespace IdeoRework
             }
 
             ReligionBelieverTracker.OnPawnJoinedColony(__instance);
+
+            if (IdeoReworkModController.Settings?.cognitiveDissonanceMode == CognitiveDissonanceMode.Experimental)
+            {
+                CognitiveDissonanceExperimental.OnNewColonistJoined(__instance);
+            }
         }
     }
 }

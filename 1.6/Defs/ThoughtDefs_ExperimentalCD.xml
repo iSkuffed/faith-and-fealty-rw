@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- ── SLAVERY ────────────────────────────────────────────────────── -->
+  <ThoughtDef>
+    <defName>CD_Exp_Slavery_Severe</defName>
+    <label>sold slave</label>
+    <description>I enslaved someone while holding conflicting beliefs about slavery.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>10</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>enslavement dissonance</label>
+        <description>My ideology and faith disagree about slavery. Enslaving someone made this conflict unbearable.</description>
+        <baseMoodEffect>-10</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>CD_Exp_Slavery_Mild</defName>
+    <label>slave sold</label>
+    <description>A colonist sold someone into slavery. My conflicting beliefs trouble me.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>4</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>witnessed enslavement</label>
+        <description>Someone in my colony engaged in slavery while my ideology and faith disagree about it.</description>
+        <baseMoodEffect>-4</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- ── CANNIBALISM ─────────────────────────────────────────────────── -->
+  <ThoughtDef>
+    <defName>CD_Exp_Cannibalism_Severe</defName>
+    <label>ate human meat</label>
+    <description>I ate human flesh while holding conflicting beliefs about cannibalism.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>10</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>cannibalism dissonance</label>
+        <description>My ideology and faith disagree about cannibalism. Consuming human meat was a breaking point.</description>
+        <baseMoodEffect>-10</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>CD_Exp_Cannibalism_Mild</defName>
+    <label>human meat eaten</label>
+    <description>A colonist ate human meat. My conflicting beliefs trouble me.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>4</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>witnessed cannibalism</label>
+        <description>Someone in my colony ate human meat while my ideology and faith disagree about cannibalism.</description>
+        <baseMoodEffect>-4</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- ── ORGAN USE ──────────────────────────────────────────────────── -->
+  <ThoughtDef>
+    <defName>CD_Exp_OrganUse_Severe</defName>
+    <label>harvested organ</label>
+    <description>I harvested organs while holding conflicting beliefs about organ use.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>8</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>organ harvesting dissonance</label>
+        <description>My ideology and faith disagree about organ use. This act tears at my convictions.</description>
+        <baseMoodEffect>-8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>CD_Exp_OrganUse_Mild</defName>
+    <label>organs harvested</label>
+    <description>A colonist harvested or traded organs. My conflicting beliefs trouble me.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>3</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>witnessed organ use</label>
+        <description>Someone in my colony engaged in organ harvesting while my ideology and faith disagree about it.</description>
+        <baseMoodEffect>-2</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- ── DIVERSITY OF THOUGHT ───────────────────────────────────────── -->
+  <ThoughtDef>
+    <defName>CD_Exp_IdeoDiversity_Severe</defName>
+    <label>new ideology joined</label>
+    <description>A colonist with different beliefs joined my colony. The conflicting stances on diversity of thought make this deeply uncomfortable.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>1</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>ideological recruit</label>
+        <description>A new colonist with different beliefs joined. My ideology and faith disagree on whether this is acceptable.</description>
+        <baseMoodEffect>-6</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>CD_Exp_IdeoDiversity_Mild</defName>
+    <label>diverse beliefs</label>
+    <description>Colonists with different beliefs live among us. My conflicting stances on diversity of thought cause lingering unease.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>2</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>ideological diversity</label>
+        <description>Different ideologies exist in my colony. My ideology and faith disagree on whether this is acceptable.</description>
+        <baseMoodEffect>-3</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- ── PHYSICAL LOVE ──────────────────────────────────────────────── -->
+  <ThoughtDef>
+    <defName>CD_Exp_Lovin_Severe</defName>
+    <label>engaged in lovin'</label>
+    <description>I engaged in physical love while holding conflicting beliefs about it.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>6</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>lovin' dissonance</label>
+        <description>My ideology and faith disagree about physical love. This encounter made the conflict painfully clear.</description>
+        <baseMoodEffect>-5</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>CD_Exp_Lovin_Mild</defName>
+    <label>lovin' occurred</label>
+    <description>A colonist engaged in physical love. My conflicting beliefs about it trouble me.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>3</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>witnessed lovin'</label>
+        <description>Someone in my colony engaged in physical love while my ideology and faith disagree about it.</description>
+        <baseMoodEffect>-2</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- ── EXECUTION ───────────────────────────────────────────────────── -->
+  <ThoughtDef>
+    <defName>CD_Exp_Execution_Severe</defName>
+    <label>executed prisoner</label>
+    <description>I executed someone while holding conflicting beliefs about execution.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>8</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>execution dissonance</label>
+        <description>My ideology and faith disagree about execution. Taking a life in this conflict weighs heavily.</description>
+        <baseMoodEffect>-7</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <ThoughtDef>
+    <defName>CD_Exp_Execution_Mild</defName>
+    <label>prisoner executed</label>
+    <description>A colonist executed a prisoner. My conflicting beliefs about execution trouble me.</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>4</durationDays>
+    <stackLimit>1</stackLimit>
+    <stages>
+      <li>
+        <label>witnessed execution</label>
+        <description>Someone in my colony executed a prisoner while my ideology and faith disagree about execution.</description>
+        <baseMoodEffect>-2</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

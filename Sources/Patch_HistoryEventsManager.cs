@@ -13,15 +13,22 @@ namespace IdeoRework
         {
             try
             {
-                if (IdeoReworkModController.Settings != null && !IdeoReworkModController.Settings.enableCognitiveDissonance)
-                    return;
+                var settings = IdeoReworkModController.Settings;
+                if (settings == null) return;
 
-                // Log engagement for cognitive dissonance tracking
-                CognitiveDissonanceTracker.LogEngagement(historyEvent.def);
+                switch (settings.cognitiveDissonanceMode)
+                {
+                    case CognitiveDissonanceMode.Legacy:
+                        CognitiveDissonanceTracker.LogEngagement(historyEvent.def);
+                        break;
+                    case CognitiveDissonanceMode.Experimental:
+                        CognitiveDissonanceExperimental.OnHistoryEvent(historyEvent);
+                        break;
+                }
             }
             catch (Exception ex)
             {
-                Log.Warning("[IdeoRework] RecordEvent engagement logging: " + ex.Message);
+                Log.Warning("[IdeoRework] RecordEvent: " + ex.Message);
             }
         }
     }

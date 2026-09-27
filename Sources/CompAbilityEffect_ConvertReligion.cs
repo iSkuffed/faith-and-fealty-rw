@@ -42,8 +42,22 @@ namespace IdeoRework
 
             var initiatorReligion = initiator.GetReligionIdeo();
             var recipientReligion = recipient.GetReligionIdeo();
-            if (initiatorReligion == null || recipientReligion == null) return;
+            if (initiatorReligion == null) return;
             if (initiatorReligion == recipientReligion) return;
+
+            // Atheist target: assign initiator's religion directly
+            if (recipientReligion == null)
+            {
+                recipient.SetReligionIdeo(initiatorReligion);
+                recipient.SetReligionCertainty(0.75f);
+
+                Messages.Message(
+                    recipient.LabelShortCap + " has been converted to " + initiatorReligion.name
+                    + " by " + initiator.LabelShortCap + ".",
+                    new LookTargets(new Pawn[] { initiator, recipient }),
+                    MessageTypeDefOf.PositiveEvent);
+                return;
+            }
 
             float reduction = InteractionWorker_ConvertIdeoAttempt.CertaintyReduction(initiator, recipient)
                               * Props.convertPowerFactor;

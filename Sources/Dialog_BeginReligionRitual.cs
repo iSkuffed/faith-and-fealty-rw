@@ -30,18 +30,18 @@ namespace IdeoRework
                 selectedPawn
             )
         {
-            // Fix: Add religion's leader role to cachedRoles 
-            // Vanilla filters out leader roles from the ritual's ideo,
-            // then only adds the ideology's leader role.
-            // We need to add back the religion's leader role. 2 Kings 17:15
+            // Add all religion roles to cachedRoles
+            // Vanilla only includes ideology roles — religion roles are invisible
+            // in the ritual dialog's role picker without this.
             var cachedRolesField = AccessTools.Field(typeof(Dialog_BeginRitual), "cachedRoles");
             var cachedRoles = cachedRolesField?.GetValue(this) as List<Precept_Role>;
             if (cachedRoles != null && ritual?.ideo != null)
             {
-                var religionLeaderRole = ritual.ideo.RolesListForReading
-                    .FirstOrDefault(r => r.def.leaderRole);
-                if (religionLeaderRole != null && !cachedRoles.Contains(religionLeaderRole))
-                    cachedRoles.Add(religionLeaderRole);
+                foreach (var role in ritual.ideo.RolesListForReading)
+                {
+                    if (!cachedRoles.Contains(role))
+                        cachedRoles.Add(role);
+                }
 
                 cachedRoles.SortBy(r => r.def.displayOrderInImpact);
             }

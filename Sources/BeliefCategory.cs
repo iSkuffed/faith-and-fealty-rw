@@ -34,7 +34,7 @@ namespace IdeoRework
             get
             {
                 return DefDatabase<MemeDef>.AllDefsListForReading
-                    .Where(m => ReligionDefLoader.GetMemeCategory(m.defName) == "Religion")
+                    .Where(m => { var c = ReligionDefLoader.GetMemeCategory(m.defName); return c == "Religion" || c == "Both"; })
                     .ToList();
             }
         }
@@ -44,7 +44,7 @@ namespace IdeoRework
             get
             {
                 return DefDatabase<MemeDef>.AllDefsListForReading
-                    .Where(m => ReligionDefLoader.GetMemeCategory(m.defName) == "Ideology")
+                    .Where(m => { var c = ReligionDefLoader.GetMemeCategory(m.defName); return c == "Ideology" || c == "Both"; })
                     .ToList();
             }
         }

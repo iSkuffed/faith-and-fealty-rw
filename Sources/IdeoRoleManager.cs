@@ -19,6 +19,39 @@ namespace IdeoRework
 
         public static void AssignRole(Pawn pawn, Precept_Role role, bool isReligion)
         {
+            var dict = isReligion ? religionRoles : ideologyRoles;
+
+            var toRemove = new List<int>();
+            foreach (var kvp in dict)
+            {
+                if (kvp.Value.roleDefName == role.def.defName
+                    && kvp.Value.ideoId == role.ideo.id
+                    && kvp.Key != pawn.thingIDNumber)
+                {
+                    toRemove.Add(kvp.Key);
+                }
+            }
+            foreach (var key in toRemove)
+            {
+                dict.Remove(key);
+                var prevPawn = PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive_FreeColonists
+                    .FirstOrDefault(p => p.thingIDNumber == key);
+                if (prevPawn != null)
+                {
+                    IdeoAbilityManager.ClearAbilities(prevPawn, isReligion);
+                    if (isReligion && ReligionLeaderTracker.ReligionLeader == prevPawn)
+                        ReligionLeaderTracker.Clear();
+                    else if (!isReligion && Faction.OfPlayer.leader == prevPawn)
+                        Faction.OfPlayer.leader = null;
+                }
+                Log.Message($"[IdeoRework] AssignRole: Evicted stale previous holder (thingId={key}) for {role.def.defName} ({role.ideo.name})");
+            }
+
+            if (toRemove.Count > 0)
+                Log.Message($"[IdeoRework] AssignRole: Evicted {toRemove.Count} previous holder(s) for {role.def.defName} ({role.ideo.name})");
+
+            Log.Message($"[IdeoRework] AssignRole: {pawn.LabelShortCap} <- {role.def.defName} ({role.ideo.name}) isReligion={isReligion}");
+
             var data = new RoleData
             {
                 roleDefName = role.def.defName,
@@ -44,6 +77,8 @@ namespace IdeoRework
 
         public static void UnassignRole(Pawn pawn, bool isReligion)
         {
+            Log.Message($"[IdeoRework] UnassignRole: {pawn?.LabelShortCap ?? "null"} isReligion={isReligion}");
+
             if (isReligion)
             {
                 religionRoles.Remove(pawn.thingIDNumber);
@@ -121,6 +156,102 @@ namespace IdeoRework
         {
             ideologyRoles.Clear();
             religionRoles.Clear();
+        }
+
+        public static int ValidateAndFix()
+        {
+            int fixes = 0;
+            var alive = PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive_FreeColonists;
+
+            // Check A: Cross-contamination — religion ideo in ideologyRoles
+            var ideKeysToRemove = new List<int>();
+            foreach (var kvp in ideologyRoles)
+            {
+                var ideo = Find.IdeoManager.IdeosListForReading.FirstOrDefault(i => i.id == kvp.Value.ideoId);
+                if (ideo != null && PresetReligions.CreatedReligionIdeos.Contains(ideo))
+                {
+                    ideKeysToRemove.Add(kvp.Key);
+                    Log.Warning($"[IdeoRework] ValidateAndFix: Cross-contamination — pawn thingId={kvp.Key} has religion ideo '{ideo.name}' in ideologyRoles");
+                }
+            }
+            foreach (var key in ideKeysToRemove)
+            {
+                ideologyRoles.Remove(key);
+                var p = alive.FirstOrDefault(x => x.thingIDNumber == key);
+                if (p != null) IdeoAbilityManager.ClearAbilities(p, isReligion: false);
+                fixes++;
+            }
+
+            // Check B: Duplicate roles — same (roleDefName, ideoId) mapped to multiple pawns
+            fixes += DeduplicateDict(ideologyRoles, alive, isReligion: false);
+            fixes += DeduplicateDict(religionRoles, alive, isReligion: true);
+
+            // Check C: Stale entries — pawn dead or not a free colonist
+            fixes += RemoveStaleEntries(ideologyRoles, alive, isReligion: false);
+            fixes += RemoveStaleEntries(religionRoles, alive, isReligion: true);
+
+            // Check D: IdeoRoleManager ideologyRoles out of sync with vanilla
+            foreach (var kvp in ideologyRoles.ToList())
+            {
+                var p = alive.FirstOrDefault(x => x.thingIDNumber == kvp.Key);
+                if (p == null) continue;
+                var vanillaRole = p.Ideo?.GetRole(p);
+                if (vanillaRole == null)
+                {
+                    ideologyRoles.Remove(kvp.Key);
+                    IdeoAbilityManager.ClearAbilities(p, isReligion: false);
+                    if (Faction.OfPlayer.leader == p)
+                        Faction.OfPlayer.leader = null;
+                    fixes++;
+                }
+            }
+
+            return fixes;
+        }
+
+        private static int DeduplicateDict(Dictionary<int, RoleData> dict, List<Pawn> alive, bool isReligion)
+        {
+            int fixes = 0;
+            var groups = dict.GroupBy(kvp => (kvp.Value.roleDefName, kvp.Value.ideoId))
+                             .Where(g => g.Count() > 1)
+                             .ToList();
+
+            foreach (var group in groups)
+            {
+                // Keep the first entry, remove the rest
+                var entries = group.ToList();
+                for (int i = 1; i < entries.Count; i++)
+                {
+                    var key = entries[i].Key;
+                    dict.Remove(key);
+                    var p = alive.FirstOrDefault(x => x.thingIDNumber == key);
+                    if (p != null)
+                    {
+                        IdeoAbilityManager.ClearAbilities(p, isReligion);
+                        if (isReligion && ReligionLeaderTracker.ReligionLeader == p)
+                            ReligionLeaderTracker.Clear();
+                        else if (!isReligion && Faction.OfPlayer.leader == p)
+                            Faction.OfPlayer.leader = null;
+                    }
+                    fixes++;
+                }
+                Log.Message($"[IdeoRework] ValidateAndFix: Deduped {entries.Count - 1} duplicate(s) for {group.Key.roleDefName} (ideoId={group.Key.ideoId})");
+            }
+            return fixes;
+        }
+
+        private static int RemoveStaleEntries(Dictionary<int, RoleData> dict, List<Pawn> alive, bool isReligion)
+        {
+            int fixes = 0;
+            var toRemove = dict.Keys.Where(key => !alive.Any(p => p.thingIDNumber == key)).ToList();
+            foreach (var key in toRemove)
+            {
+                dict.Remove(key);
+                fixes++;
+            }
+            if (toRemove.Count > 0)
+                Log.Message($"[IdeoRework] ValidateAndFix: Removed {toRemove.Count} stale entry(ies) from {(isReligion ? "religionRoles" : "ideologyRoles")}");
+            return fixes;
         }
     }
 

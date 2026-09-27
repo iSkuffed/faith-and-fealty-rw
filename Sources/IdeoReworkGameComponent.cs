@@ -60,6 +60,9 @@ namespace IdeoRework
         {
             base.FinalizeInit();
 
+            // Reset processed-pawn tracking so resurrected/moved pawns get re-fixed
+            HardOverride.ClearProcessedPawns();
+
             // Always clear — FinalizeInit is the single source of truth for NPC religions
             PresetReligions.CreatedReligionIdeos.Clear();
 

@@ -295,6 +295,27 @@ namespace IdeoRework
 
         // ── Main tick method ───────────────────────────────────────────────
 
+        // ── Cleanup ──────────────────────────────────────────────────────
+
+        public static void RemoveAllModifiers()
+        {
+            var dissonanceDef = DefDatabase<ThoughtDef>.GetNamedSilentFail("CognitiveDissonance");
+            if (dissonanceDef != null)
+            {
+                var allPawns = PawnsFinder.AllMapsCaravansAndTravellingTransporters_Alive_FreeColonists;
+                for (int i = 0; i < allPawns.Count; i++)
+                {
+                    var pawn = allPawns[i];
+                    if (pawn.needs?.mood != null)
+                        pawn.needs.mood.thoughts.memories.RemoveMemoriesOfDef(dissonanceDef);
+                }
+            }
+            EngagementLog.Clear();
+            Log.Message("[IdeoRework] Legacy Cognitive Dissonance modifiers cleared.");
+        }
+
+        // ── Main tick method ─────────────────────────────────────────────
+
         public static void Tick(int tickDelta)
         {
             try
