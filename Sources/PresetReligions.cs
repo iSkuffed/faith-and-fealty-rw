@@ -202,34 +202,38 @@ namespace IdeoRework
             {
                 // Create ideo with foundation
                 var parms = new IdeoGenerationParms(forFaction ?? FactionDefOf.PlayerColony);
+                parms.forcedMemes = memes;
                 var ideo = IdeoGenerator.GenerateIdeo(parms);
                 Log.Message($"[IdeoRework] Generated ideo: {ideo.name}, memes: {string.Join(", ", ideo.memes.Select(m => m.defName))}");
 
-                // Override memes with our preset memes
-                ideo.memes = new List<MemeDef>(memes);
                 // Set name: use baseName if provided, otherwise generate randomly
                 if (!string.IsNullOrWhiteSpace(preset.baseName))
                 ideo.name = preset.baseName;
                 else
                 ideo.name = GenerateReligionName(preset);
 
-                // Apply deity name maker override to structure meme (if preset specifies one)
-                // This controls the grammar pack used for deity name generation
-                if (!preset.deityNameMakerOverride.NullOrEmpty())
-                {
-                    var structureMeme = ideo.StructureMeme;
-                    if (structureMeme != null)
-                    {
-                        var rulePack = DefDatabase<RulePackDef>.GetNamedSilentFail(preset.deityNameMakerOverride);
-                        if (rulePack != null)
-                            structureMeme.deityNameMakerOverride = rulePack;
-                    }
-                }
-
-                // Generate deities (uses structure meme's deityCount + deityNameMakerOverride)
+                // Generate deities with the preset name maker without leaving a change on the shared MemeDef.
                 if (ideo.foundation is IdeoFoundation_Deity deityFoundation)
                 {
-                    try { deityFoundation.GenerateDeities(); } catch { }
+                    var structureMeme = ideo.StructureMeme;
+                    RulePackDef rulePack = null;
+                    if (!preset.deityNameMakerOverride.NullOrEmpty())
+                        rulePack = DefDatabase<RulePackDef>.GetNamedSilentFail(preset.deityNameMakerOverride);
+
+                    var previousRulePack = structureMeme?.deityNameMakerOverride;
+                    bool applyRulePack = structureMeme != null && rulePack != null;
+                    try
+                    {
+                        if (applyRulePack)
+                            structureMeme.deityNameMakerOverride = rulePack;
+
+                        try { deityFoundation.GenerateDeities(); } catch { }
+                    }
+                    finally
+                    {
+                        if (applyRulePack)
+                            structureMeme.deityNameMakerOverride = previousRulePack;
+                    }
                 }
 
                 // Generate a randomized name (only if no baseName was provided)
