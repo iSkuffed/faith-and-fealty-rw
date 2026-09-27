@@ -35,6 +35,8 @@ namespace IdeoRework
         private static readonly Dictionary<HistoryEventDef, List<int>> EngagementLog = new Dictionary<HistoryEventDef, List<int>>();
         private static readonly int EngagementWindowTicks = 600000; // ~10 days
 
+        public static void Reset() => EngagementLog.Clear();
+
         public static void LogEngagement(HistoryEventDef eventDef)
         {
             if (eventDef == null) return;

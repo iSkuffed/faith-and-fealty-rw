@@ -19,6 +19,15 @@ namespace IdeoRework
     {
         public new CompProperties_ReassureReligion Props => (CompProperties_ReassureReligion)props;
 
+        public override bool Valid(LocalTargetInfo target, bool throwMessages = false)
+        {
+            Pawn pawn = target.Pawn;
+            if (pawn == null) return false;
+            if (!AbilityUtility.ValidateMustBeHuman(pawn, throwMessages, parent)) return false;
+            if (!AbilityUtility.ValidateNoMentalState(pawn, throwMessages, parent)) return false;
+            return true;
+        }
+
         public override void Apply(LocalTargetInfo target, LocalTargetInfo dest)
         {
             var initiator = parent.pawn;

@@ -26,6 +26,14 @@ namespace IdeoRework
                 ? leaderTitleFemale : leaderTitleMale;
         }
 
+        // Per-game reset; unlike Clear() it must not write into the (previous) game component.
+        public static void Reset()
+        {
+            religionLeader = null;
+            leaderTitleMale = null;
+            leaderTitleFemale = null;
+        }
+
         public static void Clear()
         {
             religionLeader = null;

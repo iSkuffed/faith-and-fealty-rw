@@ -15,6 +15,8 @@ namespace IdeoRework
             return believerCounts.GetValueOrDefault(religionIdeo.id, 0);
         }
 
+        public static void Clear() => believerCounts.Clear();
+
         public static void RecacheAll()
         {
             believerCounts.Clear();

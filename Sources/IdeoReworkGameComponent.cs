@@ -15,7 +15,40 @@ namespace IdeoRework
         private List<AbilitySaveData> savedIdeologyAbilities = new List<AbilitySaveData>();
         private List<AbilitySaveData> savedReligionAbilities = new List<AbilitySaveData>();
 
-        public IdeoReworkGameComponent(Game game) { }
+        private const int DissonanceTickInterval = 250;
+
+        // Every new colony and every loaded save builds a new Game, which constructs this
+        // component before any world/pawn data loads. The trackers below are static, so this
+        // is where they are reset — otherwise state from the previous game leaks into this one.
+        public IdeoReworkGameComponent(Game game)
+        {
+            ReligionIdeoTracker.ClearAll();
+            Patch_PawnIdeoTracker_ExposeData.ClearPending();
+            PresetReligions.ClearCaches();
+            IdeoRoleManager.Clear();
+            IdeoAbilityManager.Clear();
+            ReligionLeaderTracker.Reset();
+            ReligionBelieverTracker.Clear();
+            CognitiveDissonanceTracker.Reset();
+            CognitiveDissonanceExperimental.Reset();
+            HardOverride.ClearProcessedPawns();
+            SessionRegistry.Clear();
+        }
+
+        public override void GameComponentTick()
+        {
+            if (Find.TickManager.TicksGame % DissonanceTickInterval != 0) return;
+
+            switch (IdeoReworkModController.Settings?.cognitiveDissonanceMode)
+            {
+                case CognitiveDissonanceMode.Legacy:
+                    CognitiveDissonanceTracker.Tick(DissonanceTickInterval);
+                    break;
+                case CognitiveDissonanceMode.Experimental:
+                    CognitiveDissonanceExperimental.Tick(DissonanceTickInterval);
+                    break;
+            }
+        }
 
         public override void ExposeData()
         {

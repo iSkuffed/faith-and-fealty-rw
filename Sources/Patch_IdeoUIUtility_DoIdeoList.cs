@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using HarmonyLib;
 using RimWorld;
 using UnityEngine;
@@ -15,9 +17,45 @@ namespace IdeoRework
     {
         private static float religionButtonHeight = 36f;
 
-        static bool Prefix(Rect fillRect, ref Vector2 scrollPosition, ref float scrollViewHeight, out Ideo mouseoverIdeo, bool showCreateNewButton)
+        // When the Prefix defers to vanilla, vanilla still lists every ideo via IdeosInViewOrder.
+        // Swap those calls for a filtered copy so religions can't be picked as a primary ideo there.
+        // (Filtering the getter itself would also hide religions from ritual seats.)
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var getter = AccessTools.PropertyGetter(typeof(IdeoManager), nameof(IdeoManager.IdeosInViewOrder));
+            var filtered = AccessTools.Method(typeof(Patch_IdeoUIUtility_DoIdeoList), nameof(IdeosInViewOrderNoReligions));
+            foreach (var ins in instructions)
+            {
+                if (ins.Calls(getter))
+                    yield return new CodeInstruction(OpCodes.Call, filtered).WithLabels(ins.labels).WithBlocks(ins.blocks);
+                else
+                    yield return ins;
+            }
+        }
+
+        private static IEnumerable<Ideo> IdeosInViewOrderNoReligions(IdeoManager manager)
+        {
+            return manager.IdeosInViewOrder.Where(i => !PresetReligions.CreatedReligionIdeos.Contains(i));
+        }
+
+        static bool Prefix(Rect fillRect, ref Vector2 scrollPosition, ref float scrollViewHeight, out Ideo mouseoverIdeo,
+            bool showCreateNewButton, List<Pawn> pawns = null, Action createCustomBtnActOverride = null,
+            bool forArchonexusRestart = false, Func<Pawn, Ideo> pawnIdeoGetter = null,
+            bool showLoadExistingIdeoBtn = false, Action createFluidBtnAct = null)
         {
             mouseoverIdeo = null;
+
+            // Our filtered list only knows how to draw a plain ideo browser (used by the main
+            // Ideos tab / landing page). Any of these mean a caller needs vanilla's pawn-assignment
+            // rows, create/load/fluid buttons, or the archonexus restart flow (e.g. the new-colony
+            // quest's Dialog_ConfigureIdeo, or Dialog_ConfigureIdeo's CreateFluid button) — let
+            // vanilla run untouched rather than silently dropping that functionality.
+            if (pawns != null || createCustomBtnActOverride != null || forArchonexusRestart
+                || pawnIdeoGetter != null || showLoadExistingIdeoBtn || createFluidBtnAct != null
+                || showCreateNewButton)
+            {
+                return true;
+            }
 
             // Open our own group (vanilla's DoIdeoList opens one too, but we skip vanilla)
             Widgets.BeginGroup(fillRect);

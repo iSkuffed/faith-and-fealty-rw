@@ -56,6 +56,12 @@ namespace IdeoRework
 
         private static readonly List<DissonanceErosion> activeErosions = new List<DissonanceErosion>();
         private static int diversityCheckCounter = 0;
+
+        public static void Reset()
+        {
+            activeErosions.Clear();
+            diversityCheckCounter = 0;
+        }
         private const int DiversityCheckIntervalTicks = 60000;
 
         static CognitiveDissonanceExperimental()

@@ -36,6 +36,8 @@
       <warmupTime>3.0</warmupTime>
       <targetParams>
         <canTargetBuildings>False</canTargetBuildings>
+        <canTargetAnimals>false</canTargetAnimals>
+        <canTargetMechs>false</canTargetMechs>
         <canTargetSubhumans>false</canTargetSubhumans>
         <neverTargetHostileFaction>True</neverTargetHostileFaction>
       </targetParams>
@@ -78,6 +80,8 @@
       <warmupTime>3.0</warmupTime>
       <targetParams>
         <canTargetBuildings>False</canTargetBuildings>
+        <canTargetAnimals>false</canTargetAnimals>
+        <canTargetMechs>false</canTargetMechs>
         <neverTargetHostileFaction>True</neverTargetHostileFaction>
         <canTargetSubhumans>false</canTargetSubhumans>
       </targetParams>

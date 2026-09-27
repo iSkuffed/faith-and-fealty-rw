@@ -26,6 +26,8 @@ namespace IdeoRework
         private readonly List<MemeDef> selectedIdeologyMemes = new List<MemeDef>();
         private Ideo religionIdeo;
         private Ideo ideologyIdeo;
+        private List<MemeDef> religionIdeoMemesSnapshot;
+        private List<MemeDef> ideologyIdeoMemesSnapshot;
         private Vector2 scrollPosition;
         private float scrollViewHeight;
         private bool religionPresetsExpanded;
@@ -717,18 +719,35 @@ namespace IdeoRework
 
         private void EnterReligionCustomize()
         {
-            religionIdeo = new Ideo();
-            SetupIdeo(religionIdeo, selectedReligionMemes);
+            if (religionIdeo == null || !MemeSetsEqual(religionIdeoMemesSnapshot, selectedReligionMemes))
+            {
+                religionIdeo = new Ideo();
+                SetupIdeo(religionIdeo, selectedReligionMemes);
+                religionIdeoMemesSnapshot = new List<MemeDef>(selectedReligionMemes);
+            }
             currentStep = Step.ReligionCustomize;
             scrollPosition = Vector2.zero;
         }
 
         private void EnterIdeologyCustomize()
         {
-            ideologyIdeo = new Ideo();
-            SetupIdeo(ideologyIdeo, selectedIdeologyMemes);
+            if (ideologyIdeo == null || !MemeSetsEqual(ideologyIdeoMemesSnapshot, selectedIdeologyMemes))
+            {
+                ideologyIdeo = new Ideo();
+                SetupIdeo(ideologyIdeo, selectedIdeologyMemes);
+                ideologyIdeoMemesSnapshot = new List<MemeDef>(selectedIdeologyMemes);
+            }
             currentStep = Step.IdeologyCustomize;
             scrollPosition = Vector2.zero;
+        }
+
+        // Set comparison (order-independent) so re-entering Customize after Back->Next
+        // with an unchanged meme selection keeps the existing (possibly hand-edited) Ideo.
+        private static bool MemeSetsEqual(List<MemeDef> a, List<MemeDef> b)
+        {
+            if (a == null || b == null) return false;
+            if (a.Count != b.Count) return false;
+            return new HashSet<MemeDef>(a).SetEquals(b);
         }
 
         private static void SetupIdeo(Ideo ideo, List<MemeDef> selectedMemes)

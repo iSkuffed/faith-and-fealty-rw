@@ -80,6 +80,8 @@ namespace IdeoRework
         private static readonly Dictionary<int, (int religionIdeoId, float certainty)> PendingReligionData
             = new Dictionary<int, (int, float)>();
 
+        public static void ClearPending() => PendingReligionData.Clear();
+
         static void Postfix(Pawn_IdeoTracker __instance)
         {
             try
@@ -133,42 +135,6 @@ namespace IdeoRework
             catch (Exception ex)
             {
                 Log.Warning("[IdeoRework] ExposeData religion ideo: " + ex.Message);
-            }
-        }
-    }
-
-    // ── Tick religion ideo precepts ────────────────────────────────────────
-
-    [HarmonyPatch(typeof(Pawn_IdeoTracker))]
-    [HarmonyPatch("IdeoTrackerTickInterval")]
-    public static class Patch_PawnIdeoTracker_Tick
-    {
-        static void Postfix(Pawn_IdeoTracker __instance, int delta)
-        {
-            try
-            {
-                var pawnField = AccessTools.Field(typeof(Pawn_IdeoTracker), "pawn");
-                var pawn = pawnField?.GetValue(__instance) as Pawn;
-                if (pawn == null) return;
-
-                var religionIdeo = pawn.GetReligionIdeo();
-                if (religionIdeo == null) return;
-
-                foreach (var precept in religionIdeo.PreceptsListForReading)
-                {
-                    try
-                    {
-                        precept.Tick();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Warning($"[IdeoRework] Precept.Tick error for {precept.def?.defName}: {ex.Message}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Warning("[IdeoRework] IdeoTrackerTickInterval religion: " + ex.Message);
             }
         }
     }

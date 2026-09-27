@@ -19,6 +19,17 @@ namespace IdeoRework
     {
         public new CompProperties_ConvertReligion Props => (CompProperties_ConvertReligion)props;
 
+        public override bool Valid(LocalTargetInfo target, bool throwMessages = false)
+        {
+            Pawn pawn = target.Pawn;
+            if (pawn == null) return false;
+            if (!AbilityUtility.ValidateMustBeHuman(pawn, throwMessages, parent)) return false;
+            if (!AbilityUtility.ValidateMustNotBeBaby(pawn, throwMessages, parent)) return false;
+            if (!AbilityUtility.ValidateNoMentalState(pawn, throwMessages, parent)) return false;
+            if (!AbilityUtility.ValidateIsConscious(pawn, throwMessages, parent)) return false;
+            return true;
+        }
+
         public override bool CanApplyOn(LocalTargetInfo target, LocalTargetInfo dest)
         {
             var recipient = target.Pawn;
