@@ -82,6 +82,13 @@ namespace IdeoRework
 
         public static void ClearPending() => PendingReligionData.Clear();
 
+        // Religion ideo id read from the save but not yet applied (pawn's PostLoadInit hasn't run), or -1.
+        public static int PendingReligionIdeoId(Pawn pawn)
+        {
+            return pawn != null && PendingReligionData.TryGetValue(pawn.thingIDNumber, out var data)
+                ? data.religionIdeoId : -1;
+        }
+
         static void Postfix(Pawn_IdeoTracker __instance)
         {
             try

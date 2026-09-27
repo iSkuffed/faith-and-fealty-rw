@@ -23,6 +23,11 @@ namespace IdeoRework
             if (!PresetReligions.CreatedReligionIdeos.Contains(__instance.ideo))
                 return true; // Let vanilla handle non-religion roles
 
+            // Vanilla's believer recache calls this before the religion count is known; the
+            // believer-count postfix re-runs it with the real count.
+            if (Patch_Ideo_RecacheColonistBelieverCount.RecachingReligion == __instance.ideo)
+                return false;
+
             // For religion roles, run our own RecacheActivity without notifications
             int colonistBelieverCountCached = __instance.ideo.ColonistBelieverCountCached;
 
