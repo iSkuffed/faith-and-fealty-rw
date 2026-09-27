@@ -15,6 +15,7 @@ namespace IdeoRework
             public string roleDefName;
             public int ideoId;
             public bool isLeader;
+            public Precept_Role role;
         }
 
         public static void AssignRole(Pawn pawn, Precept_Role role, bool isReligion)
@@ -56,7 +57,8 @@ namespace IdeoRework
             {
                 roleDefName = role.def.defName,
                 ideoId = role.ideo.id,
-                isLeader = role.def.leaderRole
+                isLeader = role.def.leaderRole,
+                role = role
             };
 
             if (isReligion)
@@ -99,8 +101,41 @@ namespace IdeoRework
             if (!dict.TryGetValue(pawn.thingIDNumber, out var data))
                 return null;
 
-            var ideo = Find.IdeoManager.IdeosListForReading.FirstOrDefault(i => i.id == data.ideoId);
-            return ideo?.RolesListForReading.FirstOrDefault(r => r.def.defName == data.roleDefName);
+            var cachedRole = data.role;
+            if (cachedRole != null
+                && cachedRole.ideo != null
+                && cachedRole.ideo.id == data.ideoId
+                && cachedRole.def != null
+                && cachedRole.def.defName == data.roleDefName)
+            {
+                return cachedRole;
+            }
+
+            var ideos = Find.IdeoManager.IdeosListForReading;
+            for (int i = 0; i < ideos.Count; i++)
+            {
+                var ideo = ideos[i];
+                if (ideo == null || ideo.id != data.ideoId)
+                    continue;
+
+                var roles = ideo.RolesListForReading;
+                for (int j = 0; j < roles.Count; j++)
+                {
+                    var role = roles[j];
+                    if (role == null || role.def == null || role.def.defName != data.roleDefName)
+                        continue;
+
+                    data.role = role;
+                    dict[pawn.thingIDNumber] = data;
+                    return role;
+                }
+
+                break;
+            }
+
+            data.role = null;
+            dict[pawn.thingIDNumber] = data;
+            return null;
         }
 
         public static bool HasRole(Pawn pawn, bool isReligion)
