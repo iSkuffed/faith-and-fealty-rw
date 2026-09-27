@@ -97,7 +97,8 @@ namespace IdeoRework
                 result.Add(new AbilitySaveData
                 {
                     pawnId = kvp.Key,
-                    abilityDefNames = kvp.Value.Select(a => a.def.defName).ToList()
+                    abilityDefNames = kvp.Value.Select(a => a.def.defName).ToList(),
+                    abilityCooldownTicksRemaining = kvp.Value.Select(a => a.CooldownTicksRemaining).ToList()
                 });
             }
             return result;
@@ -111,10 +112,39 @@ namespace IdeoRework
                 result.Add(new AbilitySaveData
                 {
                     pawnId = kvp.Key,
-                    abilityDefNames = kvp.Value.Select(a => a.def.defName).ToList()
+                    abilityDefNames = kvp.Value.Select(a => a.def.defName).ToList(),
+                    abilityCooldownTicksRemaining = kvp.Value.Select(a => a.CooldownTicksRemaining).ToList()
                 });
             }
             return result;
+        }
+
+        public static void RestoreCooldowns(List<AbilitySaveData> data, bool isReligion)
+        {
+            if (data == null)
+                return;
+
+            var abilityDictionary = isReligion ? religionAbilities : ideologyAbilities;
+            foreach (var entry in data)
+            {
+                if (entry.abilityDefNames == null ||
+                    !abilityDictionary.TryGetValue(entry.pawnId, out var abilities))
+                    continue;
+
+                for (int i = 0; i < entry.abilityDefNames.Count; i++)
+                {
+                    int ticksRemaining = entry.abilityCooldownTicksRemaining != null &&
+                        i < entry.abilityCooldownTicksRemaining.Count
+                            ? entry.abilityCooldownTicksRemaining[i]
+                            : 0;
+                    if (ticksRemaining <= 0)
+                        continue;
+
+                    var abilityDefName = entry.abilityDefNames[i];
+                    var ability = abilities.FirstOrDefault(a => a.def.defName == abilityDefName);
+                    ability?.StartCooldown(ticksRemaining);
+                }
+            }
         }
     }
 
@@ -122,11 +152,15 @@ namespace IdeoRework
     {
         public int pawnId;
         public List<string> abilityDefNames;
+        public List<int> abilityCooldownTicksRemaining;
 
         public void ExposeData()
         {
             Scribe_Values.Look(ref pawnId, "pawnId");
             Scribe_Collections.Look(ref abilityDefNames, "abilityDefNames", LookMode.Value);
+            Scribe_Collections.Look(ref abilityCooldownTicksRemaining, "abilityCooldownTicksRemaining", LookMode.Value);
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && abilityCooldownTicksRemaining == null)
+                abilityCooldownTicksRemaining = new List<int>();
         }
     }
 }
