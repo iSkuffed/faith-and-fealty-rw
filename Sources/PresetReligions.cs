@@ -203,7 +203,19 @@ namespace IdeoRework
                 // Create ideo with foundation
                 var parms = new IdeoGenerationParms(forFaction ?? FactionDefOf.PlayerColony);
                 parms.forcedMemes = memes;
-                var ideo = IdeoGenerator.GenerateIdeo(parms);
+                // Vanilla adds the faction's requiredMemes (e.g. pirates' Supremacist/Raider) ahead of forced memes.
+                // Religions are shared across factions and must carry only the preset memes, so hide them for this call.
+                var requiredMemes = parms.forFaction.requiredMemes;
+                Ideo ideo;
+                try
+                {
+                    parms.forFaction.requiredMemes = null;
+                    ideo = IdeoGenerator.GenerateIdeo(parms);
+                }
+                finally
+                {
+                    parms.forFaction.requiredMemes = requiredMemes;
+                }
                 Log.Message($"[IdeoRework] Generated ideo: {ideo.name}, memes: {string.Join(", ", ideo.memes.Select(m => m.defName))}");
 
                 // Set name: use baseName if provided, otherwise generate randomly
