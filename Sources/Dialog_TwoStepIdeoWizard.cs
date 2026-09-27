@@ -759,13 +759,6 @@ namespace IdeoRework
             if (preceptsField != null && preceptsField.GetValue(ideo) == null)
                 preceptsField.SetValue(ideo, new List<Precept>());
 
-            var factionField = AccessTools.Field(typeof(Ideo), "factionIdeoWeaponPairs");
-            if (factionField != null && factionField.GetValue(ideo) == null)
-            {
-                var elemType = factionField.FieldType.GetGenericArguments()[0];
-                factionField.SetValue(ideo, Activator.CreateInstance(typeof(List<>).MakeGenericType(elemType)));
-            }
-
             var thingStylesField = AccessTools.Field(typeof(Ideo), "thingStyleCategories");
             if (thingStylesField != null && thingStylesField.GetValue(ideo) == null)
                 thingStylesField.SetValue(ideo, new List<ThingStyleCategoryWithPriority>());
