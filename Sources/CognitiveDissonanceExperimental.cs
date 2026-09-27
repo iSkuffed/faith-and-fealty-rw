@@ -20,7 +20,7 @@ namespace IdeoRework
             Execution
         }
 
-        private struct DissonanceErosion
+        private class DissonanceErosion : IExposable
         {
             public Pawn pawn;
             public PreceptCategory category;
@@ -30,6 +30,22 @@ namespace IdeoRework
             public int startTick;
             public int durationTicks;
             public bool erodeIdeology;
+
+            public DissonanceErosion()
+            {
+            }
+
+            public void ExposeData()
+            {
+                Scribe_References.Look(ref pawn, "pawn");
+                Scribe_Values.Look(ref category, "category", PreceptCategory.Slavery);
+                Scribe_Values.Look(ref isDoer, "isDoer", false);
+                Scribe_Values.Look(ref totalErosion, "totalErosion", 0f);
+                Scribe_Values.Look(ref remainingErosion, "remainingErosion", 0f);
+                Scribe_Values.Look(ref startTick, "startTick", 0);
+                Scribe_Values.Look(ref durationTicks, "durationTicks", 0);
+                Scribe_Values.Look(ref erodeIdeology, "erodeIdeology", false);
+            }
         }
 
         private static readonly Dictionary<HistoryEventDef, PreceptCategory> EventToCategory = new Dictionary<HistoryEventDef, PreceptCategory>();
@@ -54,7 +70,7 @@ namespace IdeoRework
             { PreceptCategory.Execution, ("CD_Exp_Execution_Severe", "CD_Exp_Execution_Mild") },
         };
 
-        private static readonly List<DissonanceErosion> activeErosions = new List<DissonanceErosion>();
+        private static List<DissonanceErosion> activeErosions = new List<DissonanceErosion>();
         private static int diversityCheckCounter = 0;
 
         public static void Reset()
@@ -62,14 +78,31 @@ namespace IdeoRework
             activeErosions.Clear();
             diversityCheckCounter = 0;
         }
+
+        public static void ExposeData()
+        {
+            Scribe_Collections.Look(ref activeErosions, "fnfExperimentalErosions", LookMode.Deep);
+            Scribe_Values.Look(ref diversityCheckCounter, "fnfExperimentalDiversityCheckCounter", 0);
+
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                if (activeErosions == null)
+                    activeErosions = new List<DissonanceErosion>();
+
+                activeErosions.RemoveAll(erosion => erosion == null || erosion.pawn == null || erosion.pawn.Dead || erosion.pawn.Destroyed);
+            }
+        }
+
         private const int DiversityCheckIntervalTicks = 60000;
 
         static CognitiveDissonanceExperimental()
         {
             MapEventToCategory("SoldSlave", PreceptCategory.Slavery);
-            MapEventToCategory("GotSlave", PreceptCategory.Slavery);
-            MapEventToCategory("EnslavedTraveler", PreceptCategory.Slavery);
+            MapEventToCategory("EnslavedPrisoner", PreceptCategory.Slavery);
+            MapEventToCategory("EnslavedPrisonerNotPreviouslyEnslaved", PreceptCategory.Slavery);
+            MapEventToCategory("QuestPrisonerEnslaved", PreceptCategory.Slavery);
 
+            MapEventToCategory("AteHumanMeat", PreceptCategory.Cannibalism);
             MapEventToCategory("AteHumanMeatDirect", PreceptCategory.Cannibalism);
             MapEventToCategory("AteHumanMeatAsIngredient", PreceptCategory.Cannibalism);
 
@@ -78,6 +111,7 @@ namespace IdeoRework
             MapEventToCategory("HarvestedOrganFromGuest", PreceptCategory.OrganUse);
             MapEventToCategory("SoldOrgan", PreceptCategory.OrganUse);
             MapEventToCategory("TradedOrgan", PreceptCategory.OrganUse);
+            MapEventToCategory("InstalledOrgan", PreceptCategory.OrganUse);
 
             MapEventToCategory("GotLovin", PreceptCategory.Lovin);
             MapEventToCategory("GotLovin_Spouse", PreceptCategory.Lovin);
@@ -85,15 +119,19 @@ namespace IdeoRework
             MapEventToCategory("InitiatedLovin", PreceptCategory.Lovin);
 
             MapEventToCategory("ExecutedPrisoner", PreceptCategory.Execution);
-            MapEventToCategory("ExecutedGuestPrisoner", PreceptCategory.Execution);
+            MapEventToCategory("ExecutedPrisonerGuilty", PreceptCategory.Execution);
+            MapEventToCategory("ExecutedPrisonerInnocent", PreceptCategory.Execution);
+            MapEventToCategory("ExecutedGuest", PreceptCategory.Execution);
             MapEventToCategory("ExecutedColonist", PreceptCategory.Execution);
         }
 
-        private static void MapEventToCategory(string eventDefName, PreceptCategory category)
+        private static void MapEventToCategory(string eventDefName, PreceptCategory category, bool optionalDlc = false)
         {
             var def = DefDatabase<HistoryEventDef>.GetNamedSilentFail(eventDefName);
             if (def != null)
                 EventToCategory[def] = category;
+            else if (!optionalDlc)
+                Log.Warning("[IdeoRework] CognitiveDissonanceExperimental: HistoryEventDef '" + eventDefName + "' not found.");
         }
 
         private static PreceptStance GetStanceForIssue(Ideo ideo, string issueDefName)
