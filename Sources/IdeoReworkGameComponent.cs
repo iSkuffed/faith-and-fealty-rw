@@ -86,6 +86,8 @@ namespace IdeoRework
                 savedIdeologyAbilities = new List<AbilitySaveData>();
             if (savedReligionAbilities == null)
                 savedReligionAbilities = new List<AbilitySaveData>();
+
+            CognitiveDissonanceExperimental.ExposeData();
         }
 
         public override void FinalizeInit()
