@@ -53,6 +53,13 @@ namespace IdeoRework
             ReligionCertainties[pawn] = Mathf.Clamp01(certainty);
         }
 
+        // Removes the pawn without the believer recount SetReligionIdeo(null) would do.
+        public static void Forget(Pawn pawn)
+        {
+            ReligionIdeos.Remove(pawn);
+            ReligionCertainties.Remove(pawn);
+        }
+
         public static void ClearAll()
         {
             ReligionIdeos.Clear();

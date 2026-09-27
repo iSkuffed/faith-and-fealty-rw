@@ -25,6 +25,15 @@ namespace IdeoRework
             if (pawn == null) return false;
             if (!AbilityUtility.ValidateMustBeHuman(pawn, throwMessages, parent)) return false;
             if (!AbilityUtility.ValidateNoMentalState(pawn, throwMessages, parent)) return false;
+            // Same check as vanilla's ValidateSameIdeo, but for religion; otherwise Apply no-ops after the cooldown starts.
+            var religion = parent.pawn.GetReligionIdeo();
+            if (religion == null || pawn.GetReligionIdeo() != religion)
+            {
+                if (throwMessages)
+                    Messages.Message(pawn.LabelShortCap + " does not share " + parent.pawn.LabelShortCap + "'s religion.",
+                        pawn, MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
             return true;
         }
 

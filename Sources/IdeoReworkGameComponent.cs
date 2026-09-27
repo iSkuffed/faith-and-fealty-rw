@@ -28,7 +28,6 @@ namespace IdeoRework
             IdeoRoleManager.Clear();
             IdeoAbilityManager.Clear();
             ReligionLeaderTracker.Reset();
-            ReligionBelieverTracker.Clear();
             CognitiveDissonanceTracker.Reset();
             CognitiveDissonanceExperimental.Reset();
             HardOverride.ClearProcessedPawns();

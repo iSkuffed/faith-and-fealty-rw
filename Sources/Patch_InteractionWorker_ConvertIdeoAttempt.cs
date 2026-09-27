@@ -23,7 +23,7 @@ namespace IdeoRework
                 float reduction = InteractionWorker_ConvertIdeoAttempt.CertaintyReduction(initiator, recipient);
                 float newCertainty = UnityEngine.Mathf.Clamp01(recipient.GetReligionCertainty() - reduction);
                 recipient.SetReligionCertainty(newCertainty);
-                ReligionConversionTracker.CheckForConversion(recipient, newCertainty);
+                ReligionConversionTracker.CheckForConversion(recipient, newCertainty, initiatorReligion);
             }
             catch (System.Exception ex)
             {

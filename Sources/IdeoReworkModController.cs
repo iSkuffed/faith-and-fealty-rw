@@ -74,7 +74,6 @@ namespace IdeoRework
             listing.Label("Changes take effect immediately. Active modifiers from the previous mode will be removed.");
 
             listing.End();
-            Settings.Write();
         }
 
         private string GetModeLabel(CognitiveDissonanceMode mode) => mode switch
